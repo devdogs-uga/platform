@@ -14,7 +14,6 @@
     "fl": "npx prettier --write src & npx eslint --fix src"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.8.2",
     "@heroicons/react": "^2.1.5",
     "@nextui-org/avatar": "^2.0.32",
     "@nextui-org/button": "^2.0.37",
@@ -30,16 +29,14 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
     "@vercel/blob": "^0.25.1",
-    "axios": "^1.7.7",
-    "bootstrap": "^5.3.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.1.8",
     "embla-carousel-wheel-gestures": "^8.0.1",
     "input-otp": "^1.2.4",
-    "lucide-react": "^0.452.0",
-    "next": "^14.2.5",
-    "next-optimized-images": "^2.6.2",
+    "lucide-react": "^0.544.0",
+    "next": "^15.5.4",
+    "octokit": "^5.0.3",
     "prop-types": "^15.8.1",
     "query-string": "^9.1.1",
     "react": "^18.3.1",
@@ -53,6 +50,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@types/node": "24.6.2",
+    "@types/prop-types": "^15.7.15",
+    "@types/react": "19.2.0",
+    "@types/react-slick": "^0.23.13",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
@@ -65,7 +66,8 @@
     "postcss": "^8.4.41",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.8",
-    "tailwindcss": "^3.4.10"
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.9.3"
   },
   "lint-staged": {
     "src/**/*.js": "eslint --cache --fix",
