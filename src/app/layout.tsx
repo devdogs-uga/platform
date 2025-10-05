@@ -1,23 +1,24 @@
-import NavBar from "~/components/NavBar";
-import Footer from "~/components/Footer";
-import { Toaster } from "~/components/toaster";
 import "~/styles/globals.css";
 
-export const metadata = {
-  title: "DevDogs",
-  description: "Building software with a purpose at the University of Georgia.",
-};
+import { type Metadata } from "next";
+import { Hanken_Grotesk } from "next/font/google";
+import Navigation from "../components/Navigation";
 
-export default function RootLayout({ children }) {
+export const metadata: Metadata = {};
+
+const sans = Hanken_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>
-        <div id="base-background">
-          <NavBar />
-          {children}
-          <Footer />
-        </div>
-        <Toaster />
+    <html lang="en" className={`${sans.variable}`}>
+      <body className="flex min-h-screen flex-col">
+        <Navigation />
+        <main className="flex-1 bg-gray-100">{children}</main>
       </body>
     </html>
   );

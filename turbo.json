@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "globalEnv": [
+    "MYSQL_PASSWORD",
+    "MYSQL_PORT",
+    "MYSQL_DATABASE",
+    "MYSQL_USER",
+    "MYSQL_HOST",
+    "AUTH_REDIRECT_PATH",
+    "AUTH_GOOGLE_ID",
+    "AUTH_GOOGLE_SECRET"
+  ],
+  "tasks": {
+    "db:generate": {
+      "dependsOn": [],
+      "outputs": ["drizzle/**/*"]
+    },
+    "build": {
+      "dependsOn": ["db:generate"],
+      "outputs": [".next/**"]
+    },
+    "Next.js": {
+      "dependsOn": [],
+      "persistent": true,
+      "cache": false
+    },
+    "Drizzle Studio": {
+      "dependsOn": [],
+      "persistent": true,
+      "cache": false
+    },
+    "lint:fix": {
+      "dependsOn": []
+    },
+    "typecheck": {
+      "dependsOn": []
+    }
+  }
+}
