@@ -118,7 +118,7 @@ const NavBar = () => {
       <div className="invisible flex flex-row items-center align-middle sm:visible">
         <Link
           target="_blank"
-          href="https://discord.com/invite/MuyJ4f5xKE"
+          href="https://discord.gg/JdbQzQ6F"
           className="delay-50 hidden rounded-full bg-[#BA0C2F] p-2 text-lg font-medium text-white transition ease-in-out hover:bg-white hover:text-black md:text-xl lg:block"
         >
           <Button className="hidden">Join Us</Button>
