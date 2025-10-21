@@ -13,8 +13,12 @@ export const env = createEnv({
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
     BASE_URL:
-      process.env.NODE_ENV === "production"
-        ? z.url().transform((str) => "https://" + str)
+      process.env.VERCEL_ENV === "production"
+        ? z
+            .string()
+            .transform((str) => "https://" + str)
+            .pipe(z.url())
+            .optional()
         : z.url().default("http://localhost:3000"),
     AY2025_POINTS_CUTOFF: z
       .string()
@@ -37,9 +41,10 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: z.string(),
     GITHUB_ORG: z.string(),
     GITHUB_TOKEN: z.string(),
-    MYSQL_USER: (process.env.NODE_ENV === "development"
-      ? z.literal("root")
-      : z.string()
+    MYSQL_USER: (process.env.VERCEL_ENV &&
+    process.env.VERCEL_ENV !== "development"
+      ? z.string()
+      : z.literal("root")
     ).default("root"),
     MYSQL_PASSWORD: z.string().default("password"),
     MYSQL_HOST: z.string().default("localhost"),
