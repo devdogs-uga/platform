@@ -12,7 +12,10 @@ export const env = createEnv({
   server: {
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
-    BASE_URL: z.url().default("http://localhost:3000"),
+    BASE_URL:
+      process.env.NODE_ENV === "development"
+        ? z.url().default("root")
+        : z.url(),
     AY2025_POINTS_CUTOFF: z
       .string()
       .transform((str) => parse(str, "yyyy-MM-dd", noon))
@@ -70,7 +73,12 @@ export const env = createEnv({
     AY2023_POINTS_CUTOFF: process.env.AY2023_POINTS_CUTOFF,
     AY2024_POINTS_CUTOFF: process.env.AY2024_POINTS_CUTOFF,
     AY2025_POINTS_CUTOFF: process.env.AY2025_POINTS_CUTOFF,
-    BASE_URL: process.env.BASE_URL,
+    BASE_URL:
+      process.env.BASE_URL ??
+      "https://" +
+        (process.env.NODE_ENV === "production"
+          ? process.env.VERCEL_PROJECT_PRODUCTION_URL
+          : process.env.VERCEL_URL),
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     GITHUB_ORG: process.env.GITHUB_ORG,
