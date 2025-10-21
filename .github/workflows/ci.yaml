@@ -12,7 +12,7 @@ on:
 jobs:
   Checkstyle-Lint-Build:
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'DevDogs-UGA/Community-Resource-Forum' }}
+    if: ${{ github.repository == 'DevDogs-UGA/DevDogs-Website' }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup pnpm
