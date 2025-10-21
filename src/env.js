@@ -75,7 +75,7 @@ export const env = createEnv({
     AY2025_POINTS_CUTOFF: process.env.AY2025_POINTS_CUTOFF,
     BASE_URL:
       process.env.BASE_URL ??
-      (process.env.NODE_ENV === "production"
+      (process.env.VERCEL_ENV === "production"
         ? process.env.VERCEL_PROJECT_PRODUCTION_URL
         : process.env.VERCEL_URL),
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
