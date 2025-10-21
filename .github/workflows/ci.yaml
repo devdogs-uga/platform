@@ -23,6 +23,7 @@ jobs:
         run: |
           pnpm vercel pull ${{ env.ENV_CONFIG }} --yes --git-branch=${{ github.base_ref }} --token=${{ secrets.VERCEL_TOKEN }}
           pnpm vercel env pull ${{ env.ENV_CONFIG }} --token=${{ secrets.VERCEL_TOKEN }} .env
+          echo "BASE_URL=https://${{ (env.REF == 'main' && 'devdogs.uga.edu') || 'devdogs-website-$(git rev-parse --short=7 HEAD)-devdogs.vercel.app' }}" >> .env
         env:
           ENV_CONFIG: ${{ (env.REF == 'main' && '--environment=production') || format('--environment=preview --git-branch={0}', env.REF) }}
       - name: Validate Formatting and Linting

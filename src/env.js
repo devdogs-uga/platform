@@ -14,10 +14,7 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: z.string(),
     BASE_URL:
       process.env.NODE_ENV === "production"
-        ? z
-            .url()
-            .transform((str) => "https://" + str)
-            .optional()
+        ? z.url()
         : z.url().default("http://localhost:3000"),
     AY2025_POINTS_CUTOFF: z
       .string()
