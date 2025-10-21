@@ -15,7 +15,7 @@ export const env = createEnv({
     BASE_URL:
       process.env.NODE_ENV === "development"
         ? z.url().default("root")
-        : z.url(),
+        : z.url().optional(),
     AY2025_POINTS_CUTOFF: z
       .string()
       .transform((str) => parse(str, "yyyy-MM-dd", noon))
