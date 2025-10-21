@@ -1,5 +1,11 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalPassThroughEnv": [
+    "BASE_URL",
+    "VERCEL_ENV",
+    "VERCEL_URL",
+    "VERCEL_PROJECT_PRODUCTION_URL"
+  ],
   "tasks": {
     "db:generate": {
       "dependsOn": [],
@@ -15,7 +21,6 @@
         "AY2023_POINTS_CUTOFF",
         "AY2024_POINTS_CUTOFF",
         "AY2025_POINTS_CUTOFF",
-        "BASE_URL",
         "DISCORD_CLIENT_ID",
         "DISCORD_CLIENT_SECRET",
         "DISCORD_GUILD_ID",
