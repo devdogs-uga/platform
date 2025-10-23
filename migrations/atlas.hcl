@@ -4,14 +4,23 @@ data "external_schema" "drizzle" {
     "-q",
     "-n",
     "+3",
-    "/migrations/ddl.sql",
-    "/migrations/overrides.sql",
+    "migrations/ddl.sql",
+    "migrations/overrides.sql",
   ]
 }
 
 env "local" {
-  url = "mysql://${getenv("MYSQL_USER")}:${getenv("MYSQL_PASSWORD")}@${getenv("MYSQL_HOST")}:${getenv("MYSQL_PORT")}/${getenv("MYSQL_DATABASE")}"
+  url = "mysql://root:${getenv("MYSQL_PASSWORD")}@mysql:3306/${getenv("MYSQL_DATABASE")}"
   dev = "mysql://root:password@mysql-dev:3306/dev"
+  schema {
+    src = data.external_schema.drizzle.url
+  }
+  migration {
+    dir = "file://atlas/migrations"
+  }
+}
+
+env "remote" {
   schema {
     src = data.external_schema.drizzle.url
   }
