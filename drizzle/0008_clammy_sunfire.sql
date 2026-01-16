@@ -1,0 +1,1 @@
+ALTER TABLE `oauth_states` ADD `realm` enum('google','discord','github') NOT NULL;

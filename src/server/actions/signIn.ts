@@ -1,18 +1,26 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { googleOAuth2 } from "../auth";
+import { notFound } from "next/navigation";
+import * as z from "zod";
+import { authenticate } from "../auth";
+import { getCallbackPath } from "../utilts";
 
-export default async function signIn() {
-  redirect(
-    googleOAuth2.generateAuthUrl({
-      access_type: "online",
-      hd: "uga.edu",
-      include_granted_scopes: true,
-      scope: [
-        "https://www.googleapis.com/auth/userinfo.profile",
-        "https://www.googleapis.com/auth/userinfo.email",
-      ],
-    }),
-  );
+const realmSchema = z.literal(["uga", "discord", "github"]);
+
+/**
+ * Begins the authentication flow for a user.
+ * @param formData Allows two fields.
+ * - `realm` is the authentication provider. Defaults to `"uga"`.
+ * - `callbackPath` is the path to redirect the user to after the action completes. Defaults to the value of the `referer` header if present or `/` if not.
+ */
+export default async function signIn(formData: FormData) {
+  const callbackPath = await getCallbackPath("/", formData);
+  const realm = await realmSchema
+    .parseAsync(formData.get("realm"))
+    .catch(() => "uga" as const);
+
+  await authenticate(realm, callbackPath);
+
+  console.error("Redirect failed.");
+  notFound();
 }

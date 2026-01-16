@@ -2,9 +2,8 @@ import { createId } from "@paralleldrive/cuid2";
 import { sql, type SQL } from "drizzle-orm";
 import {
   mysqlTable,
-  timestamp,
   uniqueIndex,
-  type AnyMySqlColumn
+  type AnyMySqlColumn,
 } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm/relations";
 
@@ -17,22 +16,72 @@ export const users = mysqlTable(
   (d) => ({
     id: d.varchar({ length: 255 }).primaryKey().$defaultFn(createId),
     email: d.varchar({ length: 255 }).notNull(),
-    type: d.mysqlEnum(["user", "organization"]).notNull(),
     name: d.varchar({ length: 255 }).notNull(),
     image: d.varchar({ length: 255 }),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").onUpdateNow(),
+    createdAt: d.timestamp().defaultNow().notNull(),
+    updatedAt: d.timestamp().onUpdateNow(),
+    githubId: d
+      .int()
+      .references(() => githubProfiles.id, { onDelete: "set null" }),
+    discordId: d
+      .varchar({ length: 255 })
+      .references(() => discordProfiles.id, { onDelete: "set null" }),
   }),
   (t) => [uniqueIndex("email_idx").on(lower(t.email))],
 );
 
+export const userRelations = relations(users, ({ one }) => ({
+  github: one(githubProfiles, {
+    fields: [users.githubId],
+    references: [githubProfiles.id],
+  }),
+  discord: one(discordProfiles, {
+    fields: [users.discordId],
+    references: [discordProfiles.id],
+  }),
+}));
+
+export const githubProfiles = mysqlTable(
+  "github_profile",
+  (d) => ({
+    id: d.int().primaryKey(),
+    login: d.varchar({ length: 255 }).notNull(),
+    avatarUrl: d.text(),
+    pointsAY2023: d.int().notNull().default(0),
+    pointsAY2024: d.int().notNull().default(0),
+    pointsAY2025: d.int().notNull().default(0),
+    accessToken: d.varchar({ length: 255 }),
+    accessTokenExpires: d.timestamp(),
+    refreshToken: d.varchar({ length: 255 }),
+  }),
+  (t) => [uniqueIndex("login_idx").on(lower(t.login))],
+);
+
+export const githubProfileRelations = relations(githubProfiles, ({ one }) => ({
+  user: one(users),
+}));
+
+export const discordProfiles = mysqlTable(
+  "discord_profile",
+  (d) => ({
+    id: d.varchar({ length: 255 }).primaryKey(),
+    username: d.varchar({ length: 255 }).notNull(),
+    avatar: d.varchar({ length: 255 }).notNull(),
+    accessToken: d.varchar({ length: 255 }),
+    accessTokenExpires: d.timestamp(),
+    refreshToken: d.varchar({ length: 255 }),
+  }),
+  (t) => [uniqueIndex("username_idx").on(lower(t.username))],
+);
+
+export const discordProfileRelations = relations(
+  discordProfiles,
+  ({ one }) => ({
+    user: one(users),
+  }),
+);
+
 export const sessions = mysqlTable("session", (d) => ({
-  createdAt: d.timestamp().defaultNow().notNull(),
-  userAgent: d.text(),
-  userId: d
-    .varchar({ length: 255 })
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
   token: d
     .varchar({ length: 255 })
     .primaryKey()
@@ -41,6 +90,12 @@ export const sessions = mysqlTable("session", (d) => ({
         "base64",
       ),
     ),
+  userAgent: d.text(),
+  userId: d
+    .varchar({ length: 255 })
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: d.timestamp().defaultNow().notNull(),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -48,4 +103,18 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
     fields: [sessions.userId],
     references: [users.id],
   }),
+}));
+
+export const oauthStates = mysqlTable("oauth_states", (d) => ({
+  token: d
+    .varchar({ length: 255 })
+    .primaryKey()
+    .$defaultFn(() =>
+      Buffer.from(crypto.getRandomValues(new Uint8Array(128))).toString(
+        "base64",
+      ),
+    ),
+  realm: d.mysqlEnum(["uga", "discord", "github"]).notNull(),
+  callbackPath: d.text().notNull().default("/"),
+  createdAt: d.timestamp().defaultNow().notNull(),
 }));

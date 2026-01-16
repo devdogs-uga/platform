@@ -1,5 +1,3 @@
-@import "./quill.css";
-
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -44,6 +42,8 @@
   --color-putty: #dccbcb; 
   --color-night: #1c161c; 
   --color-stone-gray: #776e6e; 
+  
+  --font-brand: var(--font-brand), cursive;
 }
 
 @theme inline {

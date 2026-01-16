@@ -1,9 +1,59 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a64e8e85-a810-407c-baaa-bcecc0077312",
-  "prevId": "7fe69389-009a-4fc7-bea1-63aaa55c379e",
+  "id": "cc759da3-4724-4f2d-be34-fc8864921ea9",
+  "prevId": "30a1a825-c2f2-4be6-8d11-eab6049afce4",
   "tables": {
+    "github_profile": {
+      "name": "github_profile",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "login": {
+          "name": "login",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "points": {
+          "name": "points",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "avatarUrl": {
+          "name": "avatarUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "login_idx": {
+          "name": "login_idx",
+          "columns": ["(lower(`login`))"],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "github_profile_id": {
+          "name": "github_profile_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
     "session": {
       "name": "session",
       "columns": {
@@ -45,7 +95,7 @@
           "tableTo": "user",
           "columnsFrom": ["userId"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -96,21 +146,28 @@
           "notNull": false,
           "autoincrement": false
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": "(now())"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
           "onUpdate": true
+        },
+        "githubId": {
+          "name": "githubId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -120,7 +177,17 @@
           "isUnique": true
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "user_githubId_github_profile_id_fk": {
+          "name": "user_githubId_github_profile_id_fk",
+          "tableFrom": "user",
+          "tableTo": "github_profile",
+          "columnsFrom": ["githubId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
         "user_id": {
           "name": "user_id",
@@ -135,11 +202,21 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {}
+    "columns": {
+      "\"user\".\"created_at\"": "\"user\".\"createdAt\"",
+      "\"user\".\"updated_at\"": "\"user\".\"updatedAt\""
+    }
   },
   "internal": {
     "tables": {},
     "indexes": {
+      "login_idx": {
+        "columns": {
+          "(lower(`login`))": {
+            "isExpression": true
+          }
+        }
+      },
       "email_idx": {
         "columns": {
           "(lower(`email`))": {

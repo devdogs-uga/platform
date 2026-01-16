@@ -11,10 +11,13 @@ const config = {
       {
         source: "/api/auth/callback/google",
         destination: "/api/auth",
-        permanent: true
-      }
-    ]
-  }
+        permanent: true,
+      },
+    ];
+  },
+  experimental: {
+    authInterrupts: true,
+  },
 };
 
 export default config;

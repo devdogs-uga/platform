@@ -1,0 +1,40 @@
+name: CI
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  TURBO_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  TURBO_TEAM: ${{ secrets.VERCEL_TEAM_ID }}
+  REF: ${{ (github.event_name == 'pull_request' && github.base_ref) || github.ref_name }}
+on:
+  - pull_request
+  - push
+
+jobs:
+  Checkstyle-Lint-Build:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'DevDogs-UGA/DevDogs-Website' }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+      - name: Pull Vercel Preview Build Configuration
+        run: |
+          pnpm vercel pull ${{ env.ENV_CONFIG }} --yes --git-branch=${{ github.base_ref }} --token=${{ secrets.VERCEL_TOKEN }}
+          pnpm vercel env pull ${{ env.ENV_CONFIG }} --token=${{ secrets.VERCEL_TOKEN }} .env
+        env:
+          ENV_CONFIG: ${{ (env.REF == 'main' && '--environment=production') || format('--environment=preview --git-branch={0}', env.REF) }}
+      - name: Validate Formatting and Linting
+        run: pnpm turbo lint prettier
+      - name: Build Project
+        run: pnpm vercel build ${{ (env.REF == 'main' && '--prod') || ' ' }} --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Dry Run Database Migration (for PRs)
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          pnpm db:migrate --dry-run
+      - name: Deploy Project (for Pushes)
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          pnpm vercel deploy ${{ (env.REF == 'main' && '--prod') || ' ' }} --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+          pnpm db:push --auto-approve

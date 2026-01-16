@@ -1,5 +1,8 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
+import { parse } from "date-fns";
+
+const noon = new Date(0, 0, 1, 12, 0, 0);
 
 export const env = createEnv({
   /**
@@ -9,12 +12,39 @@ export const env = createEnv({
   server: {
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
-    AUTH_REDIRECT_URL: z
+    BASE_URL:
+      process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "development"
+        ? z
+            .string()
+            .transform((str) => "https://" + str)
+            .pipe(z.url())
+            .optional()
+        : z.url().default("http://localhost:3000"),
+    AY2025_POINTS_CUTOFF: z
       .string()
-      .default("http://localhost:3000/api/auth"),
-    MYSQL_USER: (process.env.NODE_ENV === "development"
-      ? z.literal("root")
-      : z.string()
+      .transform((str) => parse(str, "yyyy-MM-dd", noon))
+      .pipe(z.date()),
+    AY2024_POINTS_CUTOFF: z
+      .string()
+      .transform((str) => parse(str, "yyyy-MM-dd", noon))
+      .pipe(z.date()),
+    AY2023_POINTS_CUTOFF: z
+      .string()
+      .transform((str) => parse(str, "yyyy-MM-dd", noon))
+      .pipe(z.date()),
+    DISCORD_CLIENT_ID: z.string(),
+    DISCORD_CLIENT_SECRET: z.string(),
+    DISCORD_GUILD_ID: z.string(),
+    DISCORD_PUBLIC_KEY: z.string(),
+    DISCORD_TOKEN: z.string(),
+    GITHUB_CLIENT_ID: z.string(),
+    GITHUB_CLIENT_SECRET: z.string(),
+    GITHUB_ORG: z.string(),
+    GITHUB_TOKEN: z.string(),
+    MYSQL_USER: (process.env.VERCEL_ENV &&
+    process.env.VERCEL_ENV !== "development"
+      ? z.string()
+      : z.literal("root")
     ).default("root"),
     MYSQL_PASSWORD: z.string().default("password"),
     MYSQL_HOST: z.string().default("localhost"),
@@ -45,7 +75,23 @@ export const env = createEnv({
   runtimeEnv: {
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
-    AUTH_REDIRECT_URL: process.env.AUTH_REDIRECT_URL,
+    AY2023_POINTS_CUTOFF: process.env.AY2023_POINTS_CUTOFF,
+    AY2024_POINTS_CUTOFF: process.env.AY2024_POINTS_CUTOFF,
+    AY2025_POINTS_CUTOFF: process.env.AY2025_POINTS_CUTOFF,
+    BASE_URL:
+      process.env.BASE_URL ??
+      (process.env.VERCEL_ENV === "production"
+        ? process.env.VERCEL_PROJECT_PRODUCTION_URL
+        : process.env.VERCEL_URL),
+    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+    GITHUB_ORG: process.env.GITHUB_ORG,
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
+    DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+    DISCORD_GUILD_ID: process.env.DISCORD_GUILD_ID,
+    DISCORD_PUBLIC_KEY: process.env.DISCORD_PUBLIC_KEY,
+    DISCORD_TOKEN: process.env.DISCORD_TOKEN,
     MYSQL_USER: process.env.MYSQL_USER,
     MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
     MYSQL_HOST: process.env.MYSQL_HOST,

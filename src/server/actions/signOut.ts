@@ -5,8 +5,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "../db";
 import { sessions } from "../db/schema";
+import { getCallbackPath } from "../utilts";
 
-export default async function signOut() {
+export default async function signOut(formData: FormData) {
   const jar = await cookies();
   const token = jar.get("session")?.value;
 
@@ -15,5 +16,5 @@ export default async function signOut() {
     await db.delete(sessions).where(eq(sessions.token, token));
   }
 
-  redirect("/");
+  redirect(await getCallbackPath("/", formData));
 }

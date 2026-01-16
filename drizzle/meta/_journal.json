@@ -22,6 +22,62 @@
       "when": 1759704419872,
       "tag": "0002_sturdy_talisman",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1759770411867,
+      "tag": "0003_little_peter_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1759775099168,
+      "tag": "0004_robust_otto_octavius",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1760337167961,
+      "tag": "0005_outgoing_whiplash",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1760337768592,
+      "tag": "0006_slimy_sebastian_shaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1760459587625,
+      "tag": "0007_mute_young_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1760461281811,
+      "tag": "0008_clammy_sunfire",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1760466697919,
+      "tag": "0009_harsh_living_mummy",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1760577165228,
+      "tag": "0010_zippy_shooting_star",
+      "breakpoints": true
     }
   ]
 }
