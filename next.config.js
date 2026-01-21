@@ -13,6 +13,11 @@ const config = {
         destination: "/api/auth",
         permanent: true,
       },
+      {
+        source: "/settings",
+        destination: "/settings/profile",
+        permanent: false
+      }
     ];
   },
   experimental: {

@@ -1,9 +1,6 @@
 data "external_schema" "drizzle" {
   program = [ 
-    "tail",
-    "-q",
-    "-n",
-    "+3",
+    "cat",
     "migrations/ddl.sql",
     "migrations/overrides.sql",
   ]

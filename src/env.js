@@ -18,20 +18,8 @@ export const env = createEnv({
             .string()
             .transform((str) => "https://" + str)
             .pipe(z.url())
-            .optional()
         : z.url().default("http://localhost:3000"),
-    AY2025_POINTS_CUTOFF: z
-      .string()
-      .transform((str) => parse(str, "yyyy-MM-dd", noon))
-      .pipe(z.date()),
-    AY2024_POINTS_CUTOFF: z
-      .string()
-      .transform((str) => parse(str, "yyyy-MM-dd", noon))
-      .pipe(z.date()),
-    AY2023_POINTS_CUTOFF: z
-      .string()
-      .transform((str) => parse(str, "yyyy-MM-dd", noon))
-      .pipe(z.date()),
+    DEVDOGS_EPOCH: z.coerce.date().default(new Date(2024, 7, 22)),
     DISCORD_CLIENT_ID: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
     DISCORD_GUILD_ID: z.string(),
@@ -75,14 +63,12 @@ export const env = createEnv({
   runtimeEnv: {
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
-    AY2023_POINTS_CUTOFF: process.env.AY2023_POINTS_CUTOFF,
-    AY2024_POINTS_CUTOFF: process.env.AY2024_POINTS_CUTOFF,
-    AY2025_POINTS_CUTOFF: process.env.AY2025_POINTS_CUTOFF,
     BASE_URL:
       process.env.BASE_URL ??
       (process.env.VERCEL_ENV === "production"
         ? process.env.VERCEL_PROJECT_PRODUCTION_URL
         : process.env.VERCEL_URL),
+    DEVDOGS_EPOCH: process.env.DEVDOGS_EPOCH,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     GITHUB_ORG: process.env.GITHUB_ORG,

@@ -46,4 +46,4 @@ yarn-error.log*
 # idea files
 .idea
 
-supersecretscript.sh
+migrations/ddl.sql

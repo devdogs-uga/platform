@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Hanken_Grotesk } from "next/font/google";
+import Navigation from "~/components/Navigation";
 
 export const metadata: Metadata = {};
 
@@ -15,8 +16,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${sans.variable}`}>
-      <body className="flex min-h-screen flex-col bg-(--test-color)">
-        <main className="flex-1 bg-gray-100">{children}</main>
+      <body className="flex min-h-screen flex-col border-t-3 border-rose-600 bg-zinc-950 text-white">
+        <Navigation />
+        {children}
       </body>
     </html>
   );

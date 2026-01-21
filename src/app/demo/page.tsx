@@ -1,10 +1,10 @@
 import { PiDiscordLogoFill, PiSignOut } from "react-icons/pi";
 import signIn from "~/server/actions/signIn";
 import signOut from "~/server/actions/signOut";
-import { getSessionUser } from "~/server/auth";
+import { getSession } from "~/server/auth";
 
 export default async function HomePage() {
-  const session = await getSessionUser({
+  const session = await getSession({
     with: { discord: true, github: true },
   });
 
@@ -16,7 +16,7 @@ export default async function HomePage() {
 
           <form action={signOut} className="contents">
             <button
-              className="flex items-center gap-2.5 rounded-sm border border-gray-400 bg-gradient-to-b from-gray-100 to-gray-200 px-5 py-0.5 shadow-xs transition-shadow hover:shadow-sm active:bg-gradient-to-t active:shadow-inner"
+              className="flex items-center gap-2.5 rounded-sm border border-zinc-400 bg-gradient-to-b from-zinc-100 to-zinc-200 px-5 py-0.5 shadow-xs transition-shadow hover:shadow-sm active:bg-gradient-to-t active:shadow-inner"
               type="submit"
             >
               Sign Out <PiSignOut />

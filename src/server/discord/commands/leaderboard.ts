@@ -13,7 +13,7 @@ import { desc, sql } from "drizzle-orm";
 import z from "zod";
 import { Command } from "..";
 import { db } from "../../db";
-import { githubProfiles } from "../../db/schema";
+import { githubProfiles } from "../../db/schema/tables";
 
 export const leaderboard = Command({
   registration: {

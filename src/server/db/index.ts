@@ -1,15 +1,15 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import { createPool, type Pool } from "mysql2/promise";
 import { env } from "~/env";
-import * as schema from "./schema";
+import { schema, relations } from "./schema";
 
 async function getDB() {
   const globalForDb = globalThis as unknown as {
-    conn: Pool | undefined;
+    pool: Pool | undefined;
   };
 
-  const conn =
-    globalForDb.conn ??
+  const client =
+    globalForDb.pool ??
     createPool({
       host: env.MYSQL_HOST,
       user: env.MYSQL_USER,
@@ -18,10 +18,10 @@ async function getDB() {
       database: env.MYSQL_DATABASE,
     });
 
-  const db = drizzle(conn, { schema, mode: "default" });
+  const db = drizzle({ client, schema, relations, mode: "default" });
 
   if (env.NODE_ENV !== "production") {
-    globalForDb.conn = conn;
+    globalForDb.pool = client;
   }
 
   return db;
