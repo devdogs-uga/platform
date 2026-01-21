@@ -1,7 +1,6 @@
 import z from "zod";
 import { env } from "~/env";
-import { userResult } from "../github/schema";
-import * as schema from "~/server/db/schema";
+import * as schema from "~/server/db/schema/tables";
 import type { MySqlTable } from "drizzle-orm/mysql-core";
 import type { tokenResultSchema } from ".";
 
@@ -86,9 +85,9 @@ export const uga = OAuthProvider({
         picture: z.string().nullish(),
       })
       .transform((obj) => ({
-        email: obj.email,
-        name: obj.name,
-        image: obj.picture,
+        ugaMyId: obj.email,
+        legalName: obj.name,
+        //image: obj.picture,
       })),
   },
   table: schema.users,
@@ -134,7 +133,11 @@ export const github = OAuthProvider({
   },
   profileRequest: {
     url: "https://api.github.com/user",
-    validator: userResult,
+    validator: z.object({
+      id: z.int(),
+      login: z.string(),
+      avatar_url: z.string()
+    }),
   },
   table: schema.githubProfiles,
   userRelationColumnName: "githubId",

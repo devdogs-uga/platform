@@ -1,28 +1,28 @@
 import { addSeconds } from "date-fns";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { notFound, redirect, unauthorized } from "next/navigation";
 import type { NextRequest } from "next/server";
 import z from "zod";
 import { env } from "~/env";
 import { db } from "~/server/db";
-import { oauthStates, sessions, users } from "~/server/db/schema";
+import {
+  oauthStates,
+  publicProfiles,
+  SERVER_ONLY_DO_NOT_LEAK_authorizations,
+  sessions,
+  users,
+} from "~/server/db/schema/tables";
 import * as providers from "./providers";
 
 /**
  * Gets the currently signed in user.
- * @param include Specify data to include or exclude for the signed-in user using a Drizzle soft-relation query.
- * @returns `null` if the user is not signed in, or an object with user data if the user is signed in.
+ * @param include Specify data to include or exclude for the session using a Drizzle soft-relation query.
+ * @returns `null` if the user is not signed in, or an object with session data if the user is signed in.
  */
-export async function getSessionUser<
-  T extends Exclude<
-    ((Parameters<typeof db.query.sessions.findFirst>[0] & {})["with"] & {
-      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-      user: {};
-    })["user"],
-    true
-  >,
->(include?: T) {
+export async function getSession<
+  T extends (Parameters<typeof db.query.sessions.findFirst>[0] & {})["with"],
+>(include: T) {
   const token = (await cookies()).get("session")?.value;
 
   if (!token) {
@@ -30,13 +30,48 @@ export async function getSessionUser<
   }
 
   const session = await db.query.sessions.findFirst({
-    where: eq(sessions.token, token),
-    with: {
-      user: include ?? true,
+    where: {
+      token: {
+        eq: token,
+      },
     },
+    with: include,
   });
 
   return session ?? null;
+}
+
+/**
+ * Gets the currently signed in user.
+ * @param callbackPath Where to return after signing in
+ * @param include Specify data to include or exclude for the session using a Drizzle soft-relation query.
+ * @returns The session data. If there is no session present, the user is redirected to the sign-in page.
+ */
+export async function expectSession<
+  T extends (Parameters<typeof db.query.sessions.findFirst>[0] & {})["with"],
+>(callbackPath: string, include: T) {
+  const token = (await cookies()).get("session")?.value;
+
+  if (!token) {
+    await authenticate("uga", callbackPath);
+    throw new Error("Unreachable after redirect");
+  }
+
+  const session = await db.query.sessions.findFirst({
+    where: {
+      token: {
+        eq: token,
+      },
+    },
+    with: include,
+  });
+
+  if (!session) {
+    await authenticate("uga", callbackPath);
+    throw new Error("Unreachable after redirect");
+  }
+
+  return session;
 }
 
 /**
@@ -62,6 +97,8 @@ export async function authenticate(
   }
 
   const provider = providers[realm];
+  console.log("/api/auth", env.BASE_URL);
+
   redirect(
     provider.consentRequest.url +
       "?" +
@@ -100,7 +137,11 @@ const searchParamsSchema = z
           .string()
           .transform(async (stateToken) =>
             db.query.oauthStates.findFirst({
-              where: eq(oauthStates.token, stateToken),
+              where: {
+                token: {
+                  eq: stateToken,
+                },
+              },
             }),
           )
           .nonoptional(),
@@ -130,7 +171,7 @@ export async function handleOAuthRedirect(request: NextRequest) {
   const cookieStore = await cookies();
   const params = await searchParamsSchema
     .parseAsync(request.nextUrl.searchParams)
-    .catch(() => unauthorized());
+    .catch((e) => unauthorized());
 
   const provider = providers[params.state.realm];
 
@@ -188,22 +229,42 @@ export async function handleOAuthRedirect(request: NextRequest) {
 
     const token = await db
       .transaction(async (tx) => {
-        const user =
-          (await tx.query.users.findFirst({
-            where: eq(users.email, profile.email),
+        const userId = await tx.transaction(async (tx2) => {
+          const existingUser = await tx2.query.users.findFirst({
+            where: {
+              ugaMyId: {
+                eq: profile.ugaMyId,
+              },
+            },
             columns: { id: true },
-          })) ??
-          // Case [1-1-1] The user does not already exist: insert them and return their ID.
-          (await tx.insert(provider.table).values(profile).$returningId())[0];
+          });
 
-        if (!user) {
-          return tx.rollback();
-        }
+          if (existingUser) {
+            return existingUser.id;
+          }
+
+          // Case [1-1-1] The user does not already exist: insert them
+          const [insertedUser] = await tx2
+            .insert(provider.table)
+            .values(profile)
+            .$returningId();
+
+          if (!insertedUser) {
+            return tx2.rollback();
+          }
+
+          await tx2.insert(publicProfiles).values({
+            id: insertedUser.id,
+            name: profile.legalName.split(" ")[0] ?? "",
+          });
+
+          return insertedUser.id;
+        });
 
         const [insertedSession] = await tx
           .insert(sessions)
           .values({
-            userId: user.id,
+            userId,
             userAgent: request.headers.get("user-agent"),
           })
           .$returningId();
@@ -215,6 +276,7 @@ export async function handleOAuthRedirect(request: NextRequest) {
         await tx
           .delete(oauthStates)
           .where(eq(oauthStates.token, params.state.token));
+
         return insertedSession.token;
       })
       .catch((error) => {
@@ -236,7 +298,11 @@ export async function handleOAuthRedirect(request: NextRequest) {
     .transaction(async (tx) => {
       const session = sessionToken
         ? await tx.query.sessions.findFirst({
-            where: eq(sessions.token, sessionToken),
+            where: {
+              token: {
+                eq: sessionToken,
+              },
+            },
             with: { user: true },
           })
         : undefined;
@@ -245,17 +311,29 @@ export async function handleOAuthRedirect(request: NextRequest) {
         session?.user ??
         // Case [1-2-1] The user does not currently have a session: find them using the linked profile ID.
         (await tx.query.users.findFirst({
-          where: eq(users[provider.userRelationColumnName], profile.id),
+          where: { [provider.userRelationColumnName]: { eq: profile.id } },
         }));
+
+      const [insertedAuthorization] = await tx
+        .insert(SERVER_ONLY_DO_NOT_LEAK_authorizations)
+        .values(tokens)
+        .$returningId();
+
+      if (!insertedAuthorization) {
+        tx.rollback();
+        throw new Error("Token insertion failed.");
+      }
 
       await tx
         .insert(provider.table)
         .values({
           ...profile,
-          ...tokens,
+          authorizationId: insertedAuthorization.id,
         })
         .onDuplicateKeyUpdate({
-          set: tokens,
+          set: {
+            authorizationId: sql`values(${provider.table.authorizationId})`,
+          },
         });
 
       if (!user) {

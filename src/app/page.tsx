@@ -1,7 +1,5 @@
-import signIn from "~/server/actions/signIn";
-import signOut from "~/server/actions/signOut";
-import { getSessionUser } from "~/server/auth";
+import Navigation from "~/components/Navigation";
 
 export default async function HomePage() {
-  return <p>Hello world!</p>;
+  return <></>;
 }

@@ -12,11 +12,10 @@ services:
   mysql:
     image: mysql:8.0
     ports:
-      - "${MYSQL_PORT:-25060}:${MYSQL_PORT:-25060}"
+      - "${MYSQL_PORT:-25060}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-password}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-devdogs}
-      MYSQL_TCP_PORT: ${MYSQL_PORT:-25060}
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
