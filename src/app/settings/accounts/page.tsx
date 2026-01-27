@@ -36,7 +36,7 @@ function AccountCard({
 
         <p className="max-w-prose text-sm text-zinc-300">{children}</p>
       </div>
-      <div className="flex items-center justify-between border-t border-zinc-800 bg-black p-4 font-medium">
+      <div className="sm:flex-row flex-col gap-4 flex items-center justify-center sm:justify-between border-t border-zinc-800 bg-black p-4 font-medium">
         {identifier ? (
           <form className="contents" action={unlinkAction}>
             <p>

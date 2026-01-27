@@ -36,6 +36,7 @@ CREATE TABLE `public_profile` (
 	`id` varchar(255) PRIMARY KEY,
 	`name` varchar(255) NOT NULL,
 	`email` varchar(255),
+	`image` text,
 	`githubUsername` varchar(255),
 	`discordUsername` varchar(255),
 	`linkedinUsername` varchar(255),

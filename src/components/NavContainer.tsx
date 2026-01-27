@@ -1,18 +1,32 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   useCallback,
   useEffect,
+  useMemo,
   useState,
   type PropsWithChildren,
 } from "react";
+import { Root } from "@radix-ui/react-collapsible";
 
 export default function NavContainer({ children }: PropsWithChildren) {
-  const [isFloating, setIsFloating] = useState(false);
+  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  const isFromLinkInBio = useMemo(
+    () =>
+      searchParams
+        .getAll("utm_content")
+        .some((s) => s.toLowerCase().replaceAll(/[^a-z]/g, "") === "linkinbio"),
+    [searchParams],
+  );
 
   const handleScroll = useCallback(() => {
     if (document.scrollingElement) {
-      setIsFloating(document.scrollingElement.scrollTop !== 0);
+      setHasScrolled(document.scrollingElement.scrollTop !== 0);
     }
   }, []);
 
@@ -24,12 +38,20 @@ export default function NavContainer({ children }: PropsWithChildren) {
 
     return () => controller.abort();
   }, [handleScroll]);
+
+  useEffect(() => {
+    setMenuOpen(isFromLinkInBio);
+  }, [pathname, isFromLinkInBio]);
+
   return (
-    <nav
-      className="fixed top-0 left-0 w-full transition-[background-color,box-shadow,backdrop-filter] data-float:bg-black/30 data-float:shadow-xl data-float:backdrop-blur-sm"
-      data-float={isFloating || undefined}
+    <Root
+      className="group"
+      data-scrolled={hasScrolled || undefined}
+      data-from-link-in-bio={isFromLinkInBio || undefined}
+      open={isMenuOpen}
+      onOpenChange={setMenuOpen}
     >
       {children}
-    </nav>
+    </Root>
   );
 }

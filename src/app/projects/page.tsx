@@ -1,5 +1,5 @@
 import UnderConstruction from "~/components/UnderConstruction";
 
-export default async function HomePage() {
+export default async function Projects() {
   return <UnderConstruction />;
 }

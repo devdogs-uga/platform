@@ -85,7 +85,7 @@ export const uga = OAuthProvider({
         picture: z.string().nullish(),
       })
       .transform((obj) => ({
-        ugaMyId: obj.email,
+        ugaMyId: obj.email.split("@")[0],
         legalName: obj.name,
         //image: obj.picture,
       })),

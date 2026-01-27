@@ -5,6 +5,7 @@ import {
   PiCheckCircleDuotone,
   PiDiscordLogoBold,
   PiGithubLogoBold,
+  PiHeartFill,
 } from "react-icons/pi";
 import FormButton from "~/components/FormButton";
 import LinkButton from "~/components/LinkButton";
@@ -19,14 +20,14 @@ interface Props extends PropsWithChildren {
 function OnboardingStep({ complete, children, heading }: Props) {
   return (
     <section
-      className="pointer-events-none flex w-full scale-95 flex-col gap-6 rounded-md border border-zinc-800 bg-zinc-900 p-4 opacity-75 inset-shadow-sm first-of-type:not-data-complete:pointer-events-auto first-of-type:not-data-complete:scale-100 first-of-type:not-data-complete:opacity-100 [[data-complete]_+:not([data-complete])]:pointer-events-auto [[data-complete]_+:not([data-complete])]:scale-100 [[data-complete]_+:not([data-complete])]:opacity-100"
+      className="pointer-events-none flex w-full scale-95 flex-col gap-4 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-4 opacity-75 inset-shadow-sm first-of-type:not-data-complete:pointer-events-auto first-of-type:not-data-complete:scale-100 first-of-type:not-data-complete:opacity-100 sm:gap-6 sm:px-4 [[data-complete]_+:not([data-complete])]:pointer-events-auto [[data-complete]_+:not([data-complete])]:scale-100 [[data-complete]_+:not([data-complete])]:opacity-100"
       data-complete={complete || undefined}
     >
       <h3 className="relative flex flex-col gap-1.5">
-        <span className="w-max rounded-sm bg-rose-400 px-1.5 text-sm font-extrabold text-rose-950 uppercase after:content-[counter(step)] after:[counter-increment:step]">
+        <span className="w-max rounded-sm bg-rose-400 px-1.5 text-xs font-extrabold text-rose-950 uppercase after:content-[counter(step)] after:[counter-increment:step] sm:text-sm">
           Step&nbsp;
         </span>
-        <span className="text-2xl font-bold">{heading}</span>
+        <span className="text-xl font-bold sm:text-2xl">{heading}</span>
 
         {complete && (
           <span className="absolute top-1/2 right-0 -translate-y-1/2 text-5xl text-emerald-500">
@@ -49,34 +50,45 @@ export default async function Join() {
   const discordStepComplete = session.user.discordId !== null;
   const profileStepComplete = session.user.viewedSettings;
 
-  if (githubStepComplete && discordStepComplete && profileStepComplete) {
-    redirect("/");
-  }
+  // if (githubStepComplete && discordStepComplete && profileStepComplete) {
+  //   redirect("/");
+  // }
 
   return (
-    <main className="mx-auto mt-18.5 flex w-full max-w-2xl flex-col gap-6 py-12 [counter-reset:step_0]">
+    <main className="mx-auto mt-18.75 flex w-full max-w-2xl flex-col gap-4 px-3 py-8 [counter-reset:step_0] sm:gap-6 sm:py-12">
       <header className="pb-10 text-center">
-        <h2 className="pb-4 text-4xl font-bold">
+        <h2 className="pb-4 text-3xl font-bold sm:text-4xl">
           Hi there,{" "}
-          <span className="text-rose-500">
+          <span className="text-rose-400">
             {session.user.publicProfile.name}
           </span>
         </h2>
-        <p className="mx-auto max-w-prose text-xl font-medium text-zinc-400">
-          <span className="inline-block">Thanks for joining DevDogs!</span>{" "}
-          <span className="inline-block">Let&rsquo;s get you set up...</span>
+        <p className="mx-auto max-w-sm text-lg font-medium text-zinc-400 sm:max-w-prose sm:text-xl">
+          {githubStepComplete && discordStepComplete && profileStepComplete ? (
+            <>
+            <span className="inline-block">You&rsquo;re all done for now!</span>{" "}
+            <span className="inline-block">We&rsquo;ll have more for you soon <PiHeartFill className="text-rose-400 inline -mt-1 ml-0.5" /></span>
+            </>
+          ) : (
+            <>
+              <span className="inline-block">Thanks for joining DevDogs!</span>{" "}
+              <span className="inline-block">
+                Let&rsquo;s get you set up...
+              </span>
+            </>
+          )}
         </p>
       </header>
 
       <OnboardingStep
         heading={
           <>
-            Get Access to <span className="text-rose-500">GitHub</span>
+            Get Access to <span className="text-rose-400">GitHub</span>
           </>
         }
         complete={githubStepComplete}
       >
-        <p className="max-w-prose text-zinc-300">
+        <p className="flex max-w-prose flex-col gap-2 text-sm text-zinc-300 sm:block sm:text-base">
           <span className="inline-block">
             DevDogs uses GitHub to manage source code and organize
             contributions.
@@ -112,12 +124,12 @@ export default async function Join() {
       <OnboardingStep
         heading={
           <>
-            Join the <span className="text-rose-500">Discord</span>
+            Join the <span className="text-rose-400">Discord</span>
           </>
         }
         complete={discordStepComplete}
       >
-        <p className="max-w-prose text-zinc-300">
+        <p className="flex max-w-prose flex-col gap-2 text-sm text-zinc-300 sm:block sm:text-base">
           <span className="inline-block">
             DevDogs uses Discord for communicating with members.
           </span>
@@ -159,12 +171,12 @@ export default async function Join() {
       <OnboardingStep
         heading={
           <>
-            Complete Your <span className="text-rose-500">Public Profile</span>
+            Complete Your <span className="text-rose-400">Public Profile</span>
           </>
         }
         complete={profileStepComplete}
       >
-        <p className="max-w-prose text-zinc-300">
+        <p className="flex max-w-prose flex-col gap-2 text-sm text-zinc-300 sm:block sm:text-base">
           <span className="inline-block">
             DevDogs projects are resume- and portfolio-builders.
           </span>

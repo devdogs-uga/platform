@@ -41,6 +41,7 @@ export const publicProfiles = mysqlTable("public_profile", (d) => ({
     .references(() => users.id, { onDelete: "cascade" }),
   name: d.varchar({ length: 255 }).notNull(),
   email: d.varchar({ length: 255 }),
+  image: d.text(),
   githubUsername: d.varchar({ length: 255 }),
   discordUsername: d.varchar({ length: 255 }),
   linkedinUsername: d.varchar({ length: 255 }),
