@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { PropsWithChildren } from "react";
 import {
   PiChatCircleDotsBold,
+  PiKeyBold,
   PiLineVerticalBold,
   PiLinkBold,
   PiListBold,
@@ -55,6 +56,13 @@ function NavContent({ pathname }: NavContentProps) {
           Linked Accounts
         </NavLink>
         <NavLink
+          href="/settings/keys"
+          active={pathname.startsWith("/settings/keys")}
+        >
+          <PiKeyBold />
+          API Keys
+        </NavLink>
+        <NavLink
           href="/settings/feedback"
           active={pathname.startsWith("/settings/feedback")}
         >
@@ -91,18 +99,20 @@ export default function SettingsNavigation({
 }: Props) {
   return (
     <Dialog.Root>
-      <header className="sticky top-18 md:top-20 z-50 mt-17.25 top:mt-19.25 flex items-center justify-between border-y border-zinc-800 bg-black/30 px-4 md:px-6 py-5 sm:py-6 text-xl/none shadow-xl backdrop-blur-sm md:block md:py-8 md:shadow-none">
-        <h2 className="flex cursor-default items-center gap-1.5 font-semibold text-zinc-500 sm:text-2xl/none md:text-3xl">
-          Settings <PiLineVerticalBold className="rotate-24" />{" "}
-          <span className="text-white">{title}</span>
-        </h2>
+      <header className="top:mt-19.25 sticky top-18 z-50 mt-17.25 border-y border-zinc-800 bg-black/30 shadow-xl backdrop-blur-sm md:top-20 md:shadow-none">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 text-xl/none sm:py-6 md:px-6 md:py-8">
+          <h2 className="flex cursor-default items-center gap-1.5 font-semibold text-zinc-500 sm:text-2xl/none md:text-3xl">
+            Settings <PiLineVerticalBold className="rotate-24" />{" "}
+            <span className="text-white">{title}</span>
+          </h2>
 
-        <Dialog.Trigger className="-my-1.5 rounded-sm border border-zinc-600 bg-zinc-950 p-1.5 text-zinc-300 shadow-sm hover:border-zinc-500 hover:bg-zinc-900 hover:shadow-sm md:hidden">
-          <PiListBold />
-        </Dialog.Trigger>
+          <Dialog.Trigger className="-my-1.5 rounded-sm border border-zinc-600 bg-zinc-950 p-1.5 text-zinc-300 shadow-sm hover:border-zinc-500 hover:bg-zinc-900 hover:shadow-sm md:hidden">
+            <PiListBold />
+          </Dialog.Trigger>
+        </div>
       </header>
 
-      <main className="flex-1 grid-cols-[1fr_3fr] gap-x-6 py-8 pb-8 sm:px-6 md:grid">
+      <main className="mx-auto w-full max-w-6xl flex-1 grid-cols-[1fr_3fr] gap-x-6 py-8 pb-8 sm:px-6 md:grid">
         <aside className="top-26 hidden flex-col gap-0.5 self-start text-zinc-400 md:sticky md:flex">
           <NavContent pathname={pathname} />
         </aside>

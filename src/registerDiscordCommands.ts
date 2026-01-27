@@ -1,3 +1,3 @@
-import { registerCommands } from "./server/discord";
+// import { registerCommands } from "./server/discord";
 
-await registerCommands();
+// await registerCommands();

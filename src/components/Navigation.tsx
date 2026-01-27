@@ -5,7 +5,6 @@ import type { ComponentProps, PropsWithChildren, ReactNode } from "react";
 import {
   PiArrowRightBold,
   PiCalendarStarDuotone,
-  PiCaretDoubleRightBold,
   PiCodeDuotone,
   PiDotsNineBold,
   PiDotsThreeVertical,
@@ -216,7 +215,7 @@ export default async function Navigation() {
   return (
     <NavContainer>
       <nav className="fixed top-0 left-0 z-60 flex w-full flex-col from-rose-950/20 to-black/30 py-0.75 transition-[background-color,box-shadow,backdrop-filter] group-data-from-link-in-bio:h-dvh group-data-scrolled:bg-black/30 group-data-scrolled:shadow-xl group-data-scrolled:backdrop-blur-sm group-data-[state=open]:border-rose-600 group-data-[state=open]:bg-radial group-data-[state=open]:backdrop-blur-sm">
-        <div className="mx-auto flex w-full max-w-360 grid-cols-[1fr_max-content_1fr] items-center justify-between px-4 py-4.25 md:py-4.5 lg:grid md:px-6">
+        <div className="mx-auto flex w-full max-w-360 grid-cols-[1fr_max-content_1fr] items-center justify-between px-4 py-4.25 md:px-6 md:py-4.5 lg:grid">
           <Link href="/">
             <h1 className="flex items-center gap-2 text-xl font-bold md:text-2xl lg:gap-2.5">
               <figure className="size-[1.5em]">
@@ -226,7 +225,7 @@ export default async function Navigation() {
             </h1>
           </Link>
 
-          <div className="hidden items-center md:flex lg:px-4 lg:gap-4 lg:text-lg">
+          <div className="hidden items-center md:flex lg:gap-4 lg:px-4 lg:text-lg">
             <NavigationItems />
           </div>
 
@@ -242,7 +241,7 @@ export default async function Navigation() {
                       value="github"
                     />
                     <button
-                      className="flex items-center gap-2 rounded-md border border-rose-800 bg-rose-950/50 px-2 py-1 text-xs lg:text-sm transition-colors hover:bg-rose-950"
+                      className="flex items-center gap-2 rounded-md border border-rose-800 bg-rose-950/50 px-2 py-1 text-xs transition-colors hover:bg-rose-950 lg:text-sm"
                       type="submit"
                     >
                       <PiLink />
@@ -251,7 +250,7 @@ export default async function Navigation() {
                   </form>
                 )}
 
-                <p className="relative flex items-center gap-3 rounded-full border-rose-950 bg-rose-950/50 border">
+                <p className="relative flex items-center gap-3 rounded-full border border-rose-950 bg-rose-950/50">
                   {session.user.github && (
                     <Link
                       className="ml-4.5 flex items-center gap-3 text-[0.9rem]/none font-bold"
@@ -291,8 +290,8 @@ export default async function Navigation() {
                 <PiArrowRightBold />
               </Link>
             )}
-            
-            <Collapsible.Trigger className="group grid grid-cols-1 grid-rows-1 items-center rounded-sm -mx-1.5 px-1.5 py-1 text-2xl text-zinc-200 transition-colors group-data-from-link-in-bio:hidden hover:bg-rose-950 hover:text-white md:hidden md:text-3xl">
+
+            <Collapsible.Trigger className="group -mx-1.5 grid grid-cols-1 grid-rows-1 items-center rounded-sm px-1.5 py-1 text-2xl text-zinc-200 transition-colors group-data-from-link-in-bio:hidden hover:bg-rose-950 hover:text-white md:hidden md:text-3xl">
               <PiDotsNineBold className="col-start-1 row-start-1 transition-opacity group-data-[state=open]:opacity-0" />
               <PiXBold className="col-start-1 row-start-1 opacity-0 transition-opacity group-data-[state=open]:opacity-100" />
             </Collapsible.Trigger>

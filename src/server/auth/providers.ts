@@ -2,7 +2,7 @@ import z from "zod";
 import { env } from "~/env";
 import * as schema from "~/server/db/schema/tables";
 import type { MySqlTable } from "drizzle-orm/mysql-core";
-import type { tokenResultSchema } from ".";
+import type { tokenResultSchema } from "./schema";
 
 interface OAuthProvider<
   Table extends Extract<(typeof schema)[keyof typeof schema], MySqlTable>,
@@ -85,7 +85,7 @@ export const uga = OAuthProvider({
         picture: z.string().nullish(),
       })
       .transform((obj) => ({
-        ugaMyId: obj.email.split("@")[0],
+        ugaMyId: obj.email.split("@")[0]!,
         legalName: obj.name,
         //image: obj.picture,
       })),
@@ -136,26 +136,9 @@ export const github = OAuthProvider({
     validator: z.object({
       id: z.int(),
       login: z.string(),
-      avatar_url: z.string()
+      avatar_url: z.string(),
     }),
   },
   table: schema.githubProfiles,
   userRelationColumnName: "githubId",
 });
-
-/**
- * 
-    fetch(, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        client_id: env.GITHUB_CLIENT_ID,
-        client_secret: env.GITHUB_CLIENT_SECRET,
-        code,
-        grant_type,
-        redirect_uri,
-      }).toString(),
-    }),
- */

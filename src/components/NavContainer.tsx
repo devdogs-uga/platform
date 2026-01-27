@@ -1,6 +1,7 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Root } from "@radix-ui/react-collapsible";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -8,7 +9,6 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
-import { Root } from "@radix-ui/react-collapsible";
 
 export default function NavContainer({ children }: PropsWithChildren) {
   const [isMenuOpen, setMenuOpen] = useState(false);

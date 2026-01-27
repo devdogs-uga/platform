@@ -103,7 +103,6 @@
   }
 }
 
-
 @keyframes collapsible-closed {
   0% {
     height: var(--radix-collapsible-content-height);

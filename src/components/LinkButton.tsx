@@ -1,7 +1,5 @@
 import Link from "next/link";
-import type {
-  ComponentProps
-} from "react";
+import type { ComponentProps } from "react";
 
 export default function LinkButton({
   className,

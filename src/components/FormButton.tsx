@@ -14,7 +14,7 @@ export default function FormButton({
   HTMLButtonElement
 >) {
   const { pending } = useFormStatus();
-  
+
   return (
     <button
       {...props}

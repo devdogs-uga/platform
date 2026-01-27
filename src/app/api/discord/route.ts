@@ -1,1 +1,1 @@
-export { handleInteractionRequest as POST } from "~/server/discord";
+// export { handleInteractionRequest as POST } from "~/server/discord";

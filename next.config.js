@@ -16,8 +16,8 @@ const config = {
       {
         source: "/settings",
         destination: "/settings/profile",
-        permanent: false
-      }
+        permanent: false,
+      },
     ];
   },
   experimental: {

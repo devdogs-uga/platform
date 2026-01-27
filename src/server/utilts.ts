@@ -28,3 +28,11 @@ export async function getCallbackPath(fallback: string, formData?: FormData) {
     .parseAsync(formData?.get("callbackPath"))
     .catch(() => callbackPathSchema.parseAsync(referer).catch(() => fallback));
 }
+
+export function generateSecureString(byteCount: number) {
+  return Buffer.from(crypto.getRandomValues(new Uint8Array(byteCount)))
+    .toString("base64")
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replaceAll("=", "");
+}

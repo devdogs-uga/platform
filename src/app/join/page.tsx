@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import type { PropsWithChildren, ReactNode } from "react";
 import {
   PiArrowRightBold,
@@ -66,8 +65,13 @@ export default async function Join() {
         <p className="mx-auto max-w-sm text-lg font-medium text-zinc-400 sm:max-w-prose sm:text-xl">
           {githubStepComplete && discordStepComplete && profileStepComplete ? (
             <>
-            <span className="inline-block">You&rsquo;re all done for now!</span>{" "}
-            <span className="inline-block">We&rsquo;ll have more for you soon <PiHeartFill className="text-rose-400 inline -mt-1 ml-0.5" /></span>
+              <span className="inline-block">
+                You&rsquo;re all done for now!
+              </span>{" "}
+              <span className="inline-block">
+                We&rsquo;ll have more for you soon{" "}
+                <PiHeartFill className="-mt-1 ml-0.5 inline text-rose-400" />
+              </span>
             </>
           ) : (
             <>

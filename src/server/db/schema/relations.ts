@@ -37,9 +37,9 @@ const relations = defineRelations(tables, (r) => ({
       to: r.users.discordId,
     }),
     SERVER_ONLY_DO_NOT_LEAK_authorization:
-      r.one.SERVER_ONLY_DO_NOT_LEAK_authorizations({
-        from: r.githubProfiles.authorizationId,
-        to: r.SERVER_ONLY_DO_NOT_LEAK_authorizations.id,
+      r.one.SERVER_ONLY_DO_NOT_LEAK_accessTokens({
+        from: r.githubProfiles.accessTokenId,
+        to: r.SERVER_ONLY_DO_NOT_LEAK_accessTokens.id,
         optional: false,
       }),
   },
@@ -50,11 +50,22 @@ const relations = defineRelations(tables, (r) => ({
       optional: false,
     }),
     SERVER_ONLY_DO_NOT_LEAK_authorization:
-      r.one.SERVER_ONLY_DO_NOT_LEAK_authorizations({
-        from: r.discordProfiles.authorizationId,
-        to: r.SERVER_ONLY_DO_NOT_LEAK_authorizations.id,
+      r.one.SERVER_ONLY_DO_NOT_LEAK_accessTokens({
+        from: r.discordProfiles.accessTokenId,
+        to: r.SERVER_ONLY_DO_NOT_LEAK_accessTokens.id,
         optional: false,
       }),
+  },
+  authorizationCodes: {
+    client: r.one.users({
+      from: r.authorizationCodes.clientId,
+      to: r.users.id,
+      optional: false,
+    }),
+    user: r.one.users({
+      from: r.authorizationCodes.userId,
+      to: r.users.id,
+    }),
   },
 }));
 
