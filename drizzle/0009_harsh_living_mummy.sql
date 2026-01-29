@@ -1,1 +1,0 @@
-ALTER TABLE `oauth_states` MODIFY COLUMN `callbackPath` text NOT NULL DEFAULT ('/');

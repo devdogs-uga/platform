@@ -18,7 +18,7 @@ import {
   PiXBold,
 } from "react-icons/pi";
 import devdog from "~/assets/devdog.png";
-import signIn from "~/server/actions/signIn";
+import linkGithubProfile from "~/server/actions/linkGithubProfile";
 import { getSession } from "~/server/auth";
 import Avatar from "./Avatar";
 import LinkButton from "./LinkButton";
@@ -233,13 +233,7 @@ export default async function Navigation() {
             {session ? (
               <>
                 {!session.user.github && (
-                  <form className="contents" action={signIn}>
-                    <input
-                      className="hidden"
-                      type="hidden"
-                      name="realm"
-                      value="github"
-                    />
+                  <form className="contents" action={linkGithubProfile}>
                     <button
                       className="flex items-center gap-2 rounded-md border border-rose-800 bg-rose-950/50 px-2 py-1 text-xs transition-colors hover:bg-rose-950 lg:text-sm"
                       type="submit"

@@ -1,12 +1,62 @@
 import bcrypt from "bcrypt";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { redirect, unauthorized } from "next/navigation";
+import { notFound, redirect, unauthorized } from "next/navigation";
 import type { NextRequest } from "next/server";
 import { env } from "~/env";
 import { db } from "~/server/db";
 import { authorizationCodes, oauthStates } from "~/server/db/schema/tables";
-import * as providers from "./providers";
+import * as discord from "./providers/discord";
+import * as github from "./providers/github";
+import * as google from "./providers/google";
+import { searchParamsSchema } from "./schema";
+
+const OAUTH_REDIRECT_URI = new URL("/api/auth", env.BASE_URL).toString();
+
+/**
+ * Starts the OAuth flow with a specified provider
+ * @param provider One of `"google"`, `"discord"`, or `"github"`
+ * @param callbackPath Where to navigate the user to after the OAuth flow is complete
+ */
+export async function authenticate(
+  provider: "google" | "discord" | "github",
+  callbackPath: string,
+) {
+  // We expect that users attempting to link their discord/github profile are signed in
+  if (provider !== "google") {
+    await expectSession(null, {});
+  }
+
+  const [insertedState] = await db
+    .insert(oauthStates)
+    .values({
+      callbackPath,
+      provider,
+    })
+    .$returningId();
+
+  if (!insertedState) {
+    throw new Error("Failed to insert state into database.");
+  }
+
+  switch (provider) {
+    case "google":
+      return google.requestAuthorization(
+        insertedState.token,
+        OAUTH_REDIRECT_URI,
+      );
+    case "discord":
+      return discord.requestAuthorization(
+        insertedState.token,
+        OAUTH_REDIRECT_URI,
+      );
+    case "github":
+      return github.requestAuthorization(
+        insertedState.token,
+        OAUTH_REDIRECT_URI,
+      );
+  }
+}
 
 /**
  * Gets the currently signed in user.
@@ -36,18 +86,21 @@ export async function getSession<
 
 /**
  * Gets the currently signed in user.
- * @param callbackPath Where to return after signing in
+ * @param callbackPath Where to return after signing in if a session is not present. If this is `null`, then an `unauthorized()` error will be thrown.
  * @param include Specify data to include or exclude for the session using a Drizzle soft-relation query.
- * @returns The session data. If there is no session present, the user is redirected to the sign-in page.
+ * @returns The session data.
  */
 export async function expectSession<
   T extends (Parameters<typeof db.query.sessions.findFirst>[0] & {})["with"],
->(callbackPath: string, include: T) {
+>(callbackPath: string | null, include: T) {
   const token = (await cookies()).get("session")?.value;
 
   if (!token) {
-    await authenticate("uga", callbackPath);
-    throw new Error("Unreachable after redirect");
+    if (callbackPath === null) {
+      notFound();
+    }
+
+    return await authenticate("google", callbackPath);
   }
 
   const session = await db.query.sessions.findFirst({
@@ -60,51 +113,111 @@ export async function expectSession<
   });
 
   if (!session) {
-    await authenticate("uga", callbackPath);
-    throw new Error("Unreachable after redirect");
+    if (callbackPath === null) {
+      notFound();
+    }
+
+    return await authenticate("google", callbackPath);
   }
 
   return session;
 }
 
-/**
- * Redirects the user to the appropriate OAuth consent URL.
- * @param realm The authentication provider
- * @param callbackPath Where to redirect the user after the authentication flow is complete (defaults to `/`)
- * @see https://medium.com/codenx/oauth-2-0-4cddd6c7471f
- */
-export async function authenticate(
-  realm: "uga" | "discord" | "github",
-  callbackPath?: string,
-) {
-  const [insertedState] = await db
-    .insert(oauthStates)
-    .values({
-      realm,
-      callbackPath,
-    })
-    .$returningId();
+export async function handleOAuthRedirect(request: NextRequest) {
+  const params = await searchParamsSchema
+    .parseAsync(request.nextUrl.searchParams)
+    .catch((e) => {
+      console.error(e);
+      unauthorized();
+    });
 
-  if (!insertedState) {
-    throw new Error("Failed to insert state into database.");
+  // A user is trying to "Sign in with DevDogs" via OAuth
+  if ("redirect_uri" in params) {
+    const [insertedAuthorization] = await db
+      .insert(authorizationCodes)
+      .values({
+        clientId: params.client_id,
+        redirectUri: params.redirect_uri,
+        state: params.state,
+      })
+      .$returningId()
+      .catch(() =>
+        // If this insert fails, it's almost certainly because the `clientId` foreign key constraint is invalid (i.e., they're using a phony client ID)
+        unauthorized(),
+      );
+
+    if (!insertedAuthorization) {
+      unauthorized();
+    }
+
+    redirect(
+      "/api/auth?" +
+        new URLSearchParams({
+          authorization: insertedAuthorization.code,
+        }).toString(),
+    );
   }
 
-  const provider = providers[realm];
+  // A user is "Signing in with DevDogs" and has completed signing in with UGA
+  if ("authorization" in params) {
+    const session = await expectSession(
+      "/api/auth?" +
+        new URLSearchParams({
+          authorization: params.authorization.code,
+        }).toString(),
+      {},
+    );
 
-  redirect(
-    provider.consentRequest.url +
-      "?" +
-      new URLSearchParams({
-        client_id: provider.clientId,
-        redirect_uri: new URL("/api/auth", env.BASE_URL).toString(),
-        response_type: "code",
-        state: insertedState.token,
-        ...provider.consentRequest.params,
-      }).toString(),
+    const [result] = await db
+      .update(authorizationCodes)
+      .set({ userId: session.userId })
+      .where(eq(authorizationCodes.code, params.authorization.code));
+
+    if (result.affectedRows < 1) {
+      unauthorized();
+    }
+
+    redirect(
+      new URL(
+        "?" +
+          new URLSearchParams({
+            code: params.authorization.code,
+            state: params.authorization.state ?? "",
+          }).toString(),
+        params.authorization.redirectUri,
+      ).toString(),
+    );
+  }
+
+  if (params.state.provider === "github") {
+    const session = await expectSession(null, {});
+    await github.linkProfile(params.code, OAUTH_REDIRECT_URI, session.userId);
+    redirect(params.state.callbackPath);
+  }
+
+  if (params.state.provider === "discord") {
+    const session = await expectSession(null, {
+      user: { columns: {}, with: { publicProfile: true } },
+    });
+
+    await discord.linkProfile(
+      params.code,
+      OAUTH_REDIRECT_URI,
+      session.user.publicProfile,
+    );
+
+    redirect(params.state.callbackPath);
+  }
+
+  const sessionToken = await google.createSession(
+    params.code,
+    OAUTH_REDIRECT_URI,
+    request.headers.get("user-agent"),
   );
-}
 
-export { default as handleOAuthRedirect } from "./handleOAuthRedirect";
+  (await cookies()).set("session", sessionToken);
+  redirect(params.state.callbackPath);
+}
 
 export async function handleProfileRequest(request: NextRequest) {
   const data = await request.formData();

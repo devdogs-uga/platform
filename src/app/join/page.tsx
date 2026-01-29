@@ -8,7 +8,8 @@ import {
 } from "react-icons/pi";
 import FormButton from "~/components/FormButton";
 import LinkButton from "~/components/LinkButton";
-import signIn from "~/server/actions/signIn";
+import linkDiscordProfile from "~/server/actions/linkDiscordProfile";
+import linkGithubProfile from "~/server/actions/linkGithubProfile";
 import { expectSession } from "~/server/auth";
 
 interface Props extends PropsWithChildren {
@@ -107,8 +108,7 @@ export default async function Join() {
           </span>
         </p>
 
-        <form action={signIn} className="contents">
-          <input className="hidden" type="hidden" name="realm" value="github" />
+        <form action={linkGithubProfile} className="contents">
           <input
             className="hidden"
             type="hidden"
@@ -149,13 +149,7 @@ export default async function Join() {
           </span>
         </p>
 
-        <form action={signIn} className="contents">
-          <input
-            className="hidden"
-            type="hidden"
-            name="realm"
-            value="discord"
-          />
+        <form action={linkDiscordProfile} className="contents">
           <input
             className="hidden"
             type="hidden"

@@ -45,7 +45,7 @@
       "persistent": true,
       "cache": false
     },
-    "Drizzle Studio": {
+    "Drizzle-Studio": {
       "dependsOn": [],
       "persistent": true,
       "cache": false

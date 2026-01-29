@@ -70,7 +70,7 @@ export const githubProfiles = mysqlTable(
   "github_profile",
   (d) => ({
     id: d.int().primaryKey(),
-    login: d.varchar({ length: 255 }).notNull(),
+    login: d.varchar({ length: 255 }).unique().notNull(),
     avatarUrl: d.text(),
     // pointsPreviousYears: d.int().notNull().default(0),
     // pointsThisYear: d.int().notNull().default(0),
@@ -80,7 +80,9 @@ export const githubProfiles = mysqlTable(
     ranking: d.int(),
     accessTokenId: d
       .varchar({ length: 255 })
-      .references(() => SERVER_ONLY_DO_NOT_LEAK_accessTokens.id),
+      .references(() => SERVER_ONLY_DO_NOT_LEAK_accessTokens.id, {
+        onDelete: "cascade",
+      }),
   }),
   (t) => [uniqueIndex("login_idx").on(lower(t.login))],
 );
@@ -93,7 +95,9 @@ export const discordProfiles = mysqlTable(
     avatar: d.varchar({ length: 255 }).notNull(),
     accessTokenId: d
       .varchar({ length: 255 })
-      .references(() => SERVER_ONLY_DO_NOT_LEAK_accessTokens.id),
+      .references(() => SERVER_ONLY_DO_NOT_LEAK_accessTokens.id, {
+        onDelete: "cascade",
+      }),
   }),
   (t) => [uniqueIndex("username_idx").on(lower(t.username))],
 );
@@ -120,7 +124,7 @@ export const oauthStates = mysqlTable("oauth_states", (d) => ({
     .varchar({ length: 255 })
     .primaryKey()
     .$defaultFn(() => generateSecureString(128)),
-  realm: d.mysqlEnum(["uga", "discord", "github"]).notNull(),
+  provider: d.mysqlEnum(["google", "discord", "github"]).notNull(),
   callbackPath: d.text().notNull().default("/"),
   createdAt: d.timestamp().defaultNow().notNull(),
 }));

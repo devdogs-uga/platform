@@ -1,5 +1,3 @@
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import type { PropsWithChildren, ReactNode } from "react";
 import {
   PiDiscordLogoBold,
@@ -8,23 +6,24 @@ import {
 } from "react-icons/pi";
 import FormButton from "~/components/FormButton";
 import SettingsNavigation from "~/components/SettingsNavigation";
-import signIn from "~/server/actions/signIn";
+import linkDiscordProfile from "~/server/actions/linkDiscordProfile";
+import linkGithubProfile from "~/server/actions/linkGithubProfile";
+import unlinkDiscordProfile from "~/server/actions/unlinkDiscordProfile";
+import unlinkGithubProfile from "~/server/actions/unlinkGithubProfile";
 import { expectSession } from "~/server/auth";
-import { db } from "~/server/db";
-import { discordProfiles, users } from "~/server/db/schema/tables";
 
 interface Props extends PropsWithChildren {
-  unlinkAction: (formData: FormData) => Promise<void>;
+  linkProfileAction: (formData: FormData) => Promise<void>;
+  unlinkProfileAction: () => Promise<void>;
   identifier?: string;
-  realm: string;
   logo: ReactNode;
   friendlyName: string;
 }
 
 function AccountCard({
-  unlinkAction,
+  linkProfileAction,
+  unlinkProfileAction,
   identifier,
-  realm,
   logo,
   friendlyName,
   children,
@@ -38,7 +37,14 @@ function AccountCard({
       </div>
       <div className="flex flex-col items-center justify-center gap-4 border-t border-zinc-800 bg-black p-4 font-medium sm:flex-row sm:justify-between">
         {identifier ? (
-          <form className="contents" action={unlinkAction}>
+          <form className="contents" action={unlinkProfileAction}>
+            <input
+              className="hidden"
+              type="hidden"
+              name="callbackPath"
+              value="/settings/accounts"
+            />
+
             <p>
               Currently linked to{" "}
               <span className="cursor-default rounded-sm bg-zinc-800 px-1 py-0.5 font-mono text-rose-400">
@@ -55,12 +61,12 @@ function AccountCard({
             </FormButton>
           </form>
         ) : (
-          <form className="contents" action={signIn}>
+          <form className="contents" action={linkProfileAction}>
             <input
               className="hidden"
               type="hidden"
-              name="realm"
-              value={realm}
+              name="callbackPath"
+              value="/settings/accounts"
             />
 
             <p>No account linked.</p>
@@ -89,37 +95,14 @@ export default async function Settings() {
     },
   });
 
-  async function unlinkGithub() {
-    "use server";
-
-    await db
-      .update(users)
-      .set({ githubId: null })
-      .where(eq(users.id, session.userId));
-
-    revalidatePath("/settings/account");
-  }
-
-  async function unlinkDiscord() {
-    "use server";
-
-    if (session.user.discordId) {
-      await db
-        .delete(discordProfiles)
-        .where(eq(discordProfiles.id, session.user.discordId));
-    }
-
-    revalidatePath("/settings/account");
-  }
-
   return (
     <SettingsNavigation title="Linked Accounts" pathname="/settings/accounts">
       <AccountCard
-        identifier={session.user.github?.login}
-        unlinkAction={unlinkGithub}
-        realm="github"
         friendlyName="GitHub"
         logo={<PiGithubLogoBold />}
+        identifier={session.user.github?.login}
+        linkProfileAction={linkGithubProfile}
+        unlinkProfileAction={unlinkGithubProfile}
       >
         <span className="inline-block">
           DevDogs uses GitHub to manage source code and organize contributions.
@@ -134,11 +117,11 @@ export default async function Settings() {
       </AccountCard>
 
       <AccountCard
-        identifier={session.user.discord?.username}
-        unlinkAction={unlinkDiscord}
-        realm="discord"
         friendlyName="Discord"
         logo={<PiDiscordLogoBold />}
+        identifier={session.user.discord?.username}
+        linkProfileAction={linkDiscordProfile}
+        unlinkProfileAction={unlinkDiscordProfile}
       >
         <span className="inline-block">
           DevDogs uses Discord for communicating with members.
