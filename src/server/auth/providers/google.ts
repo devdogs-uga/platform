@@ -112,7 +112,7 @@ export async function createSession(
       }
 
       await tx2.insert(publicProfiles).values({
-        id: insertedUser.id,
+        userId: insertedUser.id,
         name: profile.legalName.split(" ")[0] ?? "",
       });
 

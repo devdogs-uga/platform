@@ -34,7 +34,7 @@ async function updatePreferredName(formData: FormData) {
   await db
     .update(publicProfiles)
     .set({ name })
-    .where(eq(publicProfiles.id, session.userId));
+    .where(eq(publicProfiles.userId, session.userId));
 
   revalidatePath("/settings/profile");
 }
@@ -55,7 +55,7 @@ async function updateEmail(formData: FormData) {
         .formData({ email: zfd.text(z.email()).nullish().default(null) })
         .parseAsync(formData),
     )
-    .where(eq(publicProfiles.id, session.userId));
+    .where(eq(publicProfiles.userId, session.userId));
 
   revalidatePath("/settings/profile");
 }
@@ -76,7 +76,7 @@ async function updateProfileUrl(formData: FormData) {
         .formData({ portfolioUrl: zfd.text(z.url()).nullish().default(null) })
         .parseAsync(formData),
     )
-    .where(eq(publicProfiles.id, session.userId));
+    .where(eq(publicProfiles.userId, session.userId));
 
   revalidatePath("/settings/profile");
 }
@@ -101,7 +101,7 @@ async function updateSocialMedia(formData: FormData) {
         })
         .parseAsync(formData),
     )
-    .where(eq(publicProfiles.id, session.userId));
+    .where(eq(publicProfiles.userId, session.userId));
 
   revalidatePath("/settings/profile");
 }

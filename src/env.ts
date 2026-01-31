@@ -1,8 +1,11 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
-import { parse } from "date-fns";
 
-const noon = new Date(0, 0, 1, 12, 0, 0);
+function switchEnvironment<T, R>(opt: { local: T; vercel: R }) {
+  return process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "development"
+    ? opt.vercel
+    : opt.local;
+}
 
 export const env = createEnv({
   /**
@@ -12,14 +15,17 @@ export const env = createEnv({
   server: {
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
-    BASE_URL:
-      process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "development"
-        ? z
-            .string()
-            .transform((str) => "https://" + str)
-            .pipe(z.url())
-        : z.url().default("http://localhost:3000"),
-    CRON_SECRET: z.string().min(32),
+    BASE_URL: switchEnvironment({
+      local: z.string().default(`http://localhost:${process.env.PORT ?? 3000}`),
+      vercel: z
+        .string()
+        .transform((str) => "https://" + str)
+        .pipe(z.url()),
+    }),
+    CRON_SECRET: switchEnvironment({
+      local: z.string().default(""),
+      vercel: z.string().min(32),
+    }),
     DEVDOGS_EPOCH: z.coerce.date().default(new Date(2024, 7, 22)),
     DISCORD_CLIENT_ID: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
@@ -30,11 +36,10 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: z.string(),
     GITHUB_ORG: z.string(),
     GITHUB_TOKEN: z.string(),
-    MYSQL_USER: (process.env.VERCEL_ENV &&
-    process.env.VERCEL_ENV !== "development"
-      ? z.string()
-      : z.literal("root")
-    ).default("root"),
+    MYSQL_USER: switchEnvironment({
+      local: z.string().default("root"),
+      vercel: z.string(),
+    }),
     MYSQL_PASSWORD: z.string().default("password"),
     MYSQL_HOST: z.string().default("localhost"),
     MYSQL_PORT: z.coerce.number().min(1).max(65536).default(25060),

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import z from "zod";
 import { env } from "~/env";
@@ -119,7 +119,12 @@ export async function linkProfile(
 
     await tx
       .insert(githubProfiles)
-      .values({ ...profile, accessTokenId: insertedRow.id });
+      .values({ ...profile, accessTokenId: insertedRow.id })
+      .onDuplicateKeyUpdate({
+        set: {
+          accessTokenId: sql`values(${githubProfiles.accessTokenId})`,
+        },
+      });
 
     await tx
       .update(users)

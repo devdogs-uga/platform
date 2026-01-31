@@ -110,7 +110,7 @@ export async function linkProfile(
     await tx
       .update(users)
       .set({ discordId: profile.id })
-      .where(eq(users.id, publicProfile.id));
+      .where(eq(users.id, publicProfile.userId));
   });
 }
 

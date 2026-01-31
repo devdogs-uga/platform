@@ -5,7 +5,7 @@ const relations = defineRelations(tables, (r) => ({
   users: {
     publicProfile: r.one.publicProfiles({
       from: r.users.id,
-      to: r.publicProfiles.id,
+      to: r.publicProfiles.userId,
       optional: false,
     }),
     github: r.one.githubProfiles({
@@ -26,7 +26,7 @@ const relations = defineRelations(tables, (r) => ({
   },
   publicProfiles: {
     user: r.one.users({
-      from: r.publicProfiles.id,
+      from: r.publicProfiles.userId,
       to: r.users.id,
       optional: false,
     }),
@@ -42,6 +42,10 @@ const relations = defineRelations(tables, (r) => ({
         to: r.SERVER_ONLY_DO_NOT_LEAK_accessTokens.id,
         optional: false,
       }),
+    points: r.many.points({
+      from: r.githubProfiles.id,
+      to: r.points.githubProfileId,
+    }),
   },
   discordProfiles: {
     user: r.one.users({

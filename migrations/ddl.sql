@@ -26,10 +26,10 @@ CREATE TABLE `github_profile` (
 	`id` int PRIMARY KEY,
 	`login` varchar(255) NOT NULL,
 	`avatarUrl` text,
-	`currentStreak` int NOT NULL DEFAULT 0,
-	`longestStreak` int NOT NULL DEFAULT 0,
-	`points` int NOT NULL DEFAULT 0,
-	`ranking` int,
+	`allTimePoints` int NOT NULL DEFAULT 0,
+	`allTimeRanking` int,
+	`currentYearPoints` int NOT NULL DEFAULT 0,
+	`currentYearRanking` int,
 	`accessTokenId` varchar(255),
 	CONSTRAINT `login_unique` UNIQUE INDEX(`login`),
 	CONSTRAINT `login_idx` UNIQUE INDEX((lower(`login`)))
@@ -42,8 +42,20 @@ CREATE TABLE `oauth_states` (
 	`createdAt` timestamp NOT NULL DEFAULT (now())
 );
 
+CREATE TABLE `points` (
+	`githubProfileId` int NOT NULL,
+	`year` int NOT NULL,
+	`streakStart` date NOT NULL,
+	`streakLength` int NOT NULL DEFAULT 0,
+	`longestStreakLength` int NOT NULL DEFAULT 0,
+	`projectPoints` int NOT NULL DEFAULT 0,
+	`streakBonusPoints` int NOT NULL DEFAULT 0,
+	`academyPoints` int NOT NULL DEFAULT 0,
+	`points` int GENERATED ALWAYS AS (`points`.`projectPoints` + `points`.`streakBonusPoints` + `points`.`academyPoints`) STORED NOT NULL
+);
+
 CREATE TABLE `public_profile` (
-	`id` varchar(255) PRIMARY KEY,
+	`userId` varchar(255) PRIMARY KEY,
 	`name` varchar(255) NOT NULL,
 	`email` varchar(255),
 	`image` text,
@@ -77,7 +89,8 @@ ALTER TABLE `authorization_code` ADD CONSTRAINT `authorization_code_clientId_use
 ALTER TABLE `authorization_code` ADD CONSTRAINT `authorization_code_userId_user_id_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`);
 ALTER TABLE `discord_profile` ADD CONSTRAINT `discord_profile_accessTokenId_access_token_id_fkey` FOREIGN KEY (`accessTokenId`) REFERENCES `access_token`(`id`) ON DELETE CASCADE;
 ALTER TABLE `github_profile` ADD CONSTRAINT `github_profile_accessTokenId_access_token_id_fkey` FOREIGN KEY (`accessTokenId`) REFERENCES `access_token`(`id`) ON DELETE CASCADE;
-ALTER TABLE `public_profile` ADD CONSTRAINT `public_profile_id_user_id_fkey` FOREIGN KEY (`id`) REFERENCES `user`(`id`) ON DELETE CASCADE;
+ALTER TABLE `points` ADD CONSTRAINT `points_githubProfileId_github_profile_id_fkey` FOREIGN KEY (`githubProfileId`) REFERENCES `github_profile`(`id`);
+ALTER TABLE `public_profile` ADD CONSTRAINT `public_profile_userId_user_id_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE;
 ALTER TABLE `session` ADD CONSTRAINT `session_userId_user_id_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE;
 ALTER TABLE `user` ADD CONSTRAINT `user_githubId_github_profile_id_fkey` FOREIGN KEY (`githubId`) REFERENCES `github_profile`(`id`) ON DELETE SET NULL;
 ALTER TABLE `user` ADD CONSTRAINT `user_discordId_discord_profile_id_fkey` FOREIGN KEY (`discordId`) REFERENCES `discord_profile`(`id`) ON DELETE SET NULL;

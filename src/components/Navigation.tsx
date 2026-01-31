@@ -24,6 +24,7 @@ import Avatar from "./Avatar";
 import LinkButton from "./LinkButton";
 import NavContainer from "./NavContainer";
 import Share from "./Share";
+import { env } from "~/env";
 
 interface NavItemProps extends PropsWithChildren {
   href: ComponentProps<typeof Link>["href"];
@@ -208,9 +209,13 @@ function LinkInBio() {
 export default async function Navigation() {
   const session = await getSession({
     user: {
-      with: { github: true, publicProfile: true },
+      with: { github: { with: { points: true } }, publicProfile: true },
     },
   });
+
+  const streakLength =
+    session?.user.github?.points[env.DEVDOGS_EPOCH.getUTCFullYear()]
+      ?.streakLength;
 
   return (
     <NavContainer>
@@ -250,18 +255,19 @@ export default async function Navigation() {
                       className="ml-4.5 flex items-center gap-3 text-[0.9rem]/none font-bold"
                       href="/community#leaderboard"
                     >
-                      {session.user.github.ranking && (
+                      {session.user.github.allTimeRanking && (
                         <span className="text-rose-400">
-                          #{session.user.github.ranking}
+                          #{session.user.github.allTimeRanking}
                         </span>
                       )}
                       <span className="flex flex-col gap-0.5">
                         <span className="text-[0.9rem]/none">
-                          {session.user.github.points} Points
+                          {session.user.github.allTimePoints}{" "}
+                          Points
                         </span>
-                        {session.user.github.currentStreak > 0 && (
+                        {streakLength && streakLength > 0 && (
                           <span className="text-[0.6rem]/none font-semibold text-amber-400 uppercase">
-                            {session.user?.github.currentStreak} Week Streak
+                            {streakLength} Week Streak
                           </span>
                         )}
                       </span>

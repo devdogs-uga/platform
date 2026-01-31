@@ -2,9 +2,9 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
-import "./src/env.js";
+import type { NextConfig } from "next";
+import "./src/env.ts";
 
-/** @type {import("next").NextConfig} */
 const config = {
   async redirects() {
     return [
@@ -20,9 +20,18 @@ const config = {
       },
     ];
   },
+  turbopack: {
+    rules: {
+      "*.{graphql,gql}": {
+        loaders: ["raw-loader"],
+        as: "*.js",
+      },
+    },
+    resolveExtensions: [".graphql", ".gql", ".js", ".jsx", ".ts", ".tsx"],
+  },
   experimental: {
     authInterrupts: true,
   },
-};
+} satisfies NextConfig;
 
 export default config;
