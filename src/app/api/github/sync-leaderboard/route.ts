@@ -4,7 +4,11 @@ import { env } from "~/env";
 import syncLeaderboard from "~/server/github/syncLeaderboard";
 
 export async function GET(request: Request) {
-  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "development" && request.headers.get("authorization") !== `Bearer ${env.CRON_SECRET}`) {
+  if (
+    process.env.VERCEL_ENV &&
+    process.env.VERCEL_ENV !== "development" &&
+    request.headers.get("authorization") !== `Bearer ${env.CRON_SECRET}`
+  ) {
     unauthorized();
   }
 

@@ -262,8 +262,7 @@ export default async function Navigation() {
                       )}
                       <span className="flex flex-col gap-0.5">
                         <span className="text-[0.9rem]/none">
-                          {session.user.github.allTimePoints}{" "}
-                          Points
+                          {session.user.github.allTimePoints} Points
                         </span>
                         {streakLength && streakLength > 0 && (
                           <span className="text-[0.6rem]/none font-semibold text-amber-400 uppercase">

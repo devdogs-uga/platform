@@ -11,6 +11,6 @@ export default async function unlinkGithubProfile() {
   if (session.user.github?.login) {
     await unlinkProfile(session.user.github.login);
   }
-  
+
   refresh();
 }

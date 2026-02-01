@@ -4,7 +4,6 @@ As of 10/2/24, public development of the DevDogs Website has been discontinued t
 
 From this point on, only Standing Leaders and vetted members outside of DevDogs' Standing Leadership are permitted to contribute. If this is of interest to you, please reach out to the current Technical Officer.
 
-
 ## Welcome to the DevDogs Open-Source Website!
 
 We’re excited to have you here! If you’re interested in contributing to our project, please request to join the web development team [here](https://github.com/orgs/DevDogs-UGA/teams/24-25-website-contributors) and join our [Discord server](https://linktr.ee/devdogs).

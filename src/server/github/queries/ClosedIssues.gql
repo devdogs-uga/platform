@@ -8,7 +8,7 @@ query ClosedIssues($searchQuery: String!, $cursor: String) {
     nodes {
       ... on Issue {
         closedAt
-        
+
         assignees(first: 10) {
           nodes {
             databaseId
