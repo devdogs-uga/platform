@@ -33,7 +33,9 @@ export default async function HomePage() {
         </LinkButton>
 
         <p className="text-sm text-balance text-zinc-400">
-          By continuing, you agree to our{" "}
+          When you click &ldquo;Join Us&rdquo;, you will sign in with Google. We
+          use the data you provide to verify your status as a student at UGA. By
+          continuing, you agree to our{" "}
           <Link className="underline" href="/legal/privacy">
             Privacy Policy
           </Link>

@@ -221,13 +221,14 @@ export default async function Navigation() {
     <NavContainer>
       <nav className="fixed top-0 left-0 z-60 flex w-full flex-col from-rose-950/20 to-black/30 py-0.75 transition-[background-color,box-shadow,backdrop-filter] group-data-from-link-in-bio:h-dvh group-data-scrolled:bg-black/30 group-data-scrolled:shadow-xl group-data-scrolled:backdrop-blur-sm group-data-[state=open]:border-rose-600 group-data-[state=open]:bg-radial group-data-[state=open]:backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-360 grid-cols-[1fr_max-content_1fr] items-center justify-between px-4 py-4.25 md:px-6 md:py-4.5 lg:grid">
-          <Link href="/">
-            <h1 className="flex items-center gap-2 text-xl font-bold md:text-2xl lg:gap-2.5">
-              <figure className="size-[1.5em]">
-                <Image alt="Home" src={devdog} />
-              </figure>
-              DevDogs
-            </h1>
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-xl font-bold md:text-2xl lg:gap-2.5"
+          >
+            <figure className="size-[1.5em]">
+              <Image alt="Home" src={devdog} />
+            </figure>
+            <h1 className="contents">DevDogs</h1>
           </Link>
 
           <div className="hidden items-center md:flex lg:gap-4 lg:px-4 lg:text-lg">
