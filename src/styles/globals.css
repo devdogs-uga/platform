@@ -2,6 +2,8 @@
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @font-face {
   font-family: 'Myriad Pro'; 
   src: url('/fonts/myriad-pro/MYRIADPRO-REGULAR.otf') format('opentype'); 

@@ -108,7 +108,7 @@ function LinkInBio() {
         </LinkButton>
         <Link
           href="?"
-          className="flex items-center justify-center gap-2 rounded-sm bg-rose-300 px-4 py-2 font-medium text-black hover:underline"
+          className="flex items-center justify-center gap-2 rounded-sm bg-rose-300 px-4 py-2 font-medium hover:underline"
         >
           Continue to Website
           <PiArrowRightBold />
@@ -119,7 +119,7 @@ function LinkInBio() {
         <Link
           href="https://uga.campuslabs.com/engage/organization/devdogs"
           target="_blank"
-          className="flex items-center justify-between gap-2 rounded-sm bg-rose-200 px-4 py-2 text-black hover:underline"
+          className="flex items-center justify-between gap-2 rounded-sm bg-rose-200 px-4 py-2 hover:underline"
         >
           <PiLink />
           <span className="w-full text-center">
@@ -134,7 +134,7 @@ function LinkInBio() {
         <Link
           href="https://gdg.community.dev/gdg-on-campus-university-of-georgia-athens-united-states/"
           target="_blank"
-          className="flex items-center justify-between gap-2 rounded-sm bg-rose-200 px-4 py-2 text-black hover:underline"
+          className="flex items-center justify-between gap-2 rounded-sm bg-rose-200 px-4 py-2 hover:underline"
         >
           <PiLink />
           <span className="w-full text-center">Google DGC: UGA Listing</span>
@@ -147,7 +147,7 @@ function LinkInBio() {
         <Link
           href="https://docs.google.com/forms/d/e/1FAIpQLSfH6BQCUm96Q9rUu-WKVeG6qzM4tRrXzfwxj_Np8XJoZtlZJQ/viewform"
           target="_blank"
-          className="flex items-center justify-between gap-2 rounded-sm bg-rose-200 px-4 py-2 text-black hover:underline"
+          className="flex items-center justify-between gap-2 rounded-sm bg-rose-200 px-4 py-2 hover:underline"
         >
           <PiLink />
           <span className="w-full text-center">Focus Lead Interest Form</span>
@@ -160,7 +160,7 @@ function LinkInBio() {
         <Link
           href="https://forms.gle/7DFteDC9iGu5rVCL7"
           target="_blank"
-          className="flex items-center justify-between gap-2 rounded-sm bg-rose-200 px-4 py-2 text-black hover:underline"
+          className="flex items-center justify-between gap-2 rounded-sm bg-rose-200 px-4 py-2 hover:underline"
         >
           <PiLink />
           <span className="w-full text-center">A-Team Interest Form</span>
@@ -219,7 +219,7 @@ export default async function Navigation() {
 
   return (
     <NavContainer>
-      <nav className="fixed top-0 left-0 z-60 flex w-full flex-col from-rose-950/20 to-black/30 py-0.75 transition-[background-color,box-shadow,backdrop-filter] group-data-from-link-in-bio:h-dvh group-data-scrolled:bg-black/30 group-data-scrolled:shadow-xl group-data-scrolled:backdrop-blur-sm group-data-[state=open]:border-rose-600 group-data-[state=open]:bg-radial group-data-[state=open]:backdrop-blur-sm">
+      <nav className="fixed top-0 left-0 z-60 flex w-full flex-col text-night dark:text-snow from-rose-950/20 to-black/30 py-0.75 transition-[background-color,box-shadow,backdrop-filter] group-data-from-link-in-bio:h-dvh group-data-scrolled:bg-black/30 group-data-scrolled:shadow-xl group-data-scrolled:backdrop-blur-sm group-data-[state=open]:border-rose-600 group-data-[state=open]:bg-radial group-data-[state=open]:backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-360 grid-cols-[1fr_max-content_1fr] items-center justify-between px-4 py-4.25 md:px-6 md:py-4.5 lg:grid">
           <Link href="/">
             <h1 className="flex items-center gap-2 text-xl font-bold md:text-2xl lg:gap-2.5">

@@ -152,7 +152,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${baru.variable} ${myriad.variable}`}>
+    <html data-theme="dark" lang="en" className={`${baru.variable} ${myriad.variable}`}>
       <body className="flex min-h-screen flex-col">
         <Navigation /> 
         <main className="flex-1 text-night bg-linear-to-b from-snow to-putty dark:text-snow dark:from-dark-purple dark:to-night">{children}</main>
