@@ -35,7 +35,7 @@ export function requestAuthorization(
 const profileSchema = z.object({
   id: z.string(),
   username: z.string(),
-  avatar: z.string(),
+  avatar: z.string().nullish(),
 });
 
 /**

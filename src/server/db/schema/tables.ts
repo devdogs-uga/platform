@@ -120,7 +120,7 @@ export const discordProfiles = mysqlTable(
   (d) => ({
     id: d.varchar({ length: 255 }).primaryKey(),
     username: d.varchar({ length: 255 }).notNull(),
-    avatar: d.varchar({ length: 255 }).notNull(),
+    avatar: d.varchar({ length: 255 }),
     accessTokenId: d
       .varchar({ length: 255 })
       .references(() => SERVER_ONLY_DO_NOT_LEAK_accessTokens.id, {
