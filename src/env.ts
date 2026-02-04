@@ -53,7 +53,7 @@ export const env = createEnv({
     S3_SECRET_ACCESS_KEY: z.string().default("test"),
     SHARED_AUTH_CLIENT_ID: switchEnvironment({
       local: z.string().optional(),
-      vercel: z.string().min(32),
+      vercel: z.string().min(16),
     }),
     SHARED_AUTH_CLIENT_SECRET: switchEnvironment({
       local: z.string().optional(),
