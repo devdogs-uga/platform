@@ -18,8 +18,6 @@
       "dependsOn": [],
       "outputs": [".next/**"],
       "env": [
-        "AUTH_GOOGLE_ID",
-        "AUTH_GOOGLE_SECRET",
         "BASE_URL",
         "CRON_SECRET",
         "DEVDOGS_EPOCH",
@@ -32,6 +30,8 @@
         "DISCORD_GUILD_ID",
         "DISCORD_PUBLIC_KEY",
         "DISCORD_TOKEN",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
         "MYSQL_USER",
         "MYSQL_PASSWORD",
         "MYSQL_HOST",
@@ -40,7 +40,9 @@
         "S3_PORT",
         "S3_REGION",
         "S3_ACCESS_KEY_ID",
-        "S3_SECRET_ACCESS_KEY"
+        "S3_SECRET_ACCESS_KEY",
+        "SHARED_AUTH_CLIENT_ID",
+        "SHARED_AUTH_CLIENT_SECRET"
       ]
     },
     "Next.js": {
