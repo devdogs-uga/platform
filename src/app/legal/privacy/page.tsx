@@ -1,6 +1,6 @@
 export default function Privacy() {
   return (
-    <div className="prose-sm prose-headings:text-balance mx-auto mt-17.25 max-w-xl px-3 pt-12 pb-24 md:mt-19.25">
+    <div className="prose-sm prose-headings:text-balance mx-auto mt-19 max-w-xl px-3 pt-12 pb-24">
       <h1 id="-devdogs-x-gdg-on-campus-privacy-policy-">
         <strong>DevDogs x GDG On Campus Privacy Policy</strong>
       </h1>

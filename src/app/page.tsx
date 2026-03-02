@@ -58,7 +58,7 @@ function Avatar({ name, title, imageSrc, smaller = false }: AvatarProps) {
 export default async function HomePage() {
   return (
     <main className="flex flex-col items-center">
-      <section className="relative w-full bg-radial-[at_50%_100%] from-rose-950/40 to-indigo-950/40 pt-18.5">
+      <section className="relative w-full bg-radial-[at_50%_100%] from-rose-950/40 to-indigo-950/40 pt-19">
         <svg className="pointer-events-none absolute inset-0 isolate z-10 size-full opacity-70 mix-blend-soft-light">
           <filter id="delbadeoliveiraisalegend">
             <feTurbulence
@@ -150,7 +150,7 @@ export default async function HomePage() {
         <h2 className="px-4 text-center text-sm font-extrabold tracking-wide text-zinc-400 uppercase">
           Contributors to DevDogs are
         </h2>
-        <ul className="w-full overflow-hidden text-teal-300">
+        <ul className="w-full overflow-hidden text-cyan-300">
           <Marquee className="overflow-hidden text-xl/none" autoFill>
             <MarqueeItem>Software Engineers</MarqueeItem>
             <MarqueeItem>UI Designers</MarqueeItem>

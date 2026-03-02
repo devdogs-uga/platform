@@ -3,7 +3,7 @@ import LinkButton from "./LinkButton";
 
 export default function UnderConstruction() {
   return (
-    <main className="flex h-dvh flex-col items-center justify-around px-4 py-18.75">
+    <main className="flex h-dvh flex-col items-center justify-around px-4 py-18 md:py-18.575">
       <section className="flex max-w-md flex-col items-center gap-8 text-center text-lg font-medium md:gap-12 md:text-xl">
         <h2 className="text-4xl/none font-bold md:text-5xl/none">
           Under <span className="text-rose-400">Construction</span>

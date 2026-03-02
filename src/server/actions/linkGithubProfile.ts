@@ -9,7 +9,7 @@ import { getCallbackPath } from "../utilts";
  * @param formData Allows one field.
  * - `callbackPath` is the path to redirect the user to after the action completes. Defaults to the value of the `referer` header if present or `/` if not.
  */
-export default async function signIn(formData: FormData) {
+export default async function linkGithubProfile(formData: FormData) {
   const callbackPath = await getCallbackPath("/", formData);
   await authenticate("github", callbackPath);
   console.error("Redirect failed.");

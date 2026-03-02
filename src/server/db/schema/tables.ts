@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { sql, type SQL } from "drizzle-orm";
-import { primaryKey } from "drizzle-orm/cockroach-core";
+import { primaryKey } from "drizzle-orm/mysql-core";
 import {
   mysqlTable,
   uniqueIndex,
@@ -109,9 +109,7 @@ export const points = mysqlTable(
         { mode: "stored" },
       ),
   }),
-  (t) => [
-    primaryKey({ columns: [t.githubProfileId, t.year], name: "pk_points" }),
-  ],
+  (t) => [primaryKey({ columns: [t.githubProfileId, t.year] })],
 );
 
 export const discordProfiles = mysqlTable(

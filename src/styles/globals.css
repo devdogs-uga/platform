@@ -9,6 +9,32 @@
   --animate-wave: wave 5s linear infinite;
   --animate-collapsible-open: collapsible-open 200ms ease-in;
   --animate-collapsible-closed: collapsible-closed 200ms ease-out;
+  --animate-dialog-slide-in: dialog-slide-in 200ms ease-in;
+  --animate-dialog-slide-out: dialog-slide-out 200ms ease-out;
+}
+
+@keyframes dialog-slide-in {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0%);
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-slide-out {
+  from {
+    transform: translateX(0%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
 }
 
 @keyframes wave {
@@ -16,30 +42,39 @@
     transform: rotate(0deg) scale(100%);
     transform-origin: bottom right;
   }
+
   10% {
     transform: rotate(0deg) scale(110%);
   }
+
   15% {
     transform: rotate(-8deg) scale(110%);
   }
+
   25% {
     transform: rotate(8deg) scale(110%);
   }
+
   35% {
     transform: rotate(-8deg) scale(110%);
   }
+
   45% {
     transform: rotate(8deg) scale(110%);
   }
+
   55% {
     transform: rotate(-8deg) scale(110%);
   }
+
   65% {
     transform: rotate(8deg) scale(110%);
   }
+
   75% {
     transform: rotate(0deg) scale(110%);
   }
+
   85% {
     transform: rotate(0deg) scale(100%);
   }
@@ -50,9 +85,11 @@
     height: 0;
     opacity: 0%;
   }
+
   50% {
     opacity: 100%;
   }
+
   100% {
     height: var(--radix-collapsible-content-height);
     opacity: 100%;
@@ -64,9 +101,11 @@
     height: var(--radix-collapsible-content-height);
     opacity: 100%;
   }
+
   50% {
     opacity: 100%;
   }
+
   100% {
     height: 0;
     opacity: 0%;

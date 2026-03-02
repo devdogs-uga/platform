@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import type { PropsWithChildren, ReactNode } from "react";
 import {
   PiArrowRightBold,
@@ -50,12 +51,12 @@ export default async function Join() {
   const discordStepComplete = session.user.discordId !== null;
   const profileStepComplete = session.user.viewedSettings;
 
-  // if (githubStepComplete && discordStepComplete && profileStepComplete) {
-  //   redirect("/");
-  // }
+  if (githubStepComplete && discordStepComplete && profileStepComplete) {
+    redirect("/");
+  }
 
   return (
-    <main className="mx-auto mt-18.75 flex w-full max-w-2xl flex-col gap-4 px-3 py-8 [counter-reset:step_0] sm:gap-6 sm:py-12">
+    <main className="mx-auto mt-18 md:mt-18.5 flex w-full max-w-2xl flex-col gap-4 px-3 py-8 [counter-reset:step_0] sm:gap-6 sm:py-12 grow">
       <header className="pb-10 text-center">
         <h2 className="pb-4 text-3xl font-bold sm:text-4xl">
           Hi there,{" "}

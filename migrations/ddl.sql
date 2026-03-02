@@ -51,7 +51,8 @@ CREATE TABLE `points` (
 	`projectPoints` int NOT NULL DEFAULT 0,
 	`streakBonusPoints` int NOT NULL DEFAULT 0,
 	`academyPoints` int NOT NULL DEFAULT 0,
-	`points` int GENERATED ALWAYS AS (`points`.`projectPoints` + `points`.`streakBonusPoints` + `points`.`academyPoints`) STORED NOT NULL
+	`points` int GENERATED ALWAYS AS (`points`.`projectPoints` + `points`.`streakBonusPoints` + `points`.`academyPoints`) STORED NOT NULL,
+	CONSTRAINT `PRIMARY` PRIMARY KEY(`githubProfileId`,`year`)
 );
 
 CREATE TABLE `public_profile` (

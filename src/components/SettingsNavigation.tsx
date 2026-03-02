@@ -99,7 +99,7 @@ export default function SettingsNavigation({
 }: Props) {
   return (
     <Dialog.Root>
-      <header className="top:mt-19.25 sticky top-18 z-50 mt-17.25 border-y border-zinc-800 bg-black/30 shadow-xl backdrop-blur-sm md:top-20 md:shadow-none">
+      <header className="top-19 sticky z-50 mt-19 border-y border-zinc-800 bg-black/30 shadow-xl backdrop-blur-sm md:shadow-none">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 text-xl/none sm:py-6 md:px-6 md:py-8">
           <h2 className="flex cursor-default items-center gap-1.5 font-semibold text-zinc-500 sm:text-2xl/none md:text-3xl">
             Settings <PiLineVerticalBold className="rotate-24" />{" "}
@@ -113,7 +113,7 @@ export default function SettingsNavigation({
       </header>
 
       <main className="mx-auto w-full max-w-6xl flex-1 grid-cols-[1fr_3fr] gap-x-6 py-8 pb-8 sm:px-6 md:grid">
-        <aside className="top-26 hidden flex-col gap-0.5 self-start text-zinc-400 md:sticky md:flex">
+        <aside className="top-52.5 hidden flex-col gap-0.5 self-start text-zinc-400 md:sticky md:flex">
           <NavContent pathname={pathname} />
         </aside>
 
