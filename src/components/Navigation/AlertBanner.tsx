@@ -20,7 +20,7 @@ export default function AlertBanner({ linkedGithubProfile, streak }: Props) {
     () =>
       !!streak &&
       isBetween([streak.renewalStart, streak.renewalCutoff], new Date()),
-    [],
+    [streak],
   );
 
   return (
