@@ -29,7 +29,10 @@ export const authorizationCodes = mysqlTable("authorization_code", (d) => ({
     .$defaultFn(() => generateSecureString(128)),
   clientId: d
     .varchar({ length: 255 })
-    .references(() => oauthKeys.clientId, { onDelete: "set null", onUpdate: "cascade" }),
+    .references(() => oauthKeys.clientId, {
+      onDelete: "set null",
+      onUpdate: "cascade",
+    }),
   redirectUri: d.text().notNull(),
   state: d.text(),
   userId: d
@@ -44,7 +47,11 @@ export const ticTacToeKeys = mysqlTable("tic_tac_toe_key", (d) => ({
     .primaryKey()
     .references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
   publicKey: d.varchar({ length: 255 }).notNull().unique(),
-  lastUpdated: d.timestamp().notNull().onUpdateNow(),
+  lastUpdated: d
+    .timestamp()
+    .notNull()
+    .$defaultFn(() => new Date())
+    .onUpdateNow(),
 }));
 
 export const oauthKeys = mysqlTable("oauth_key", (d) => ({

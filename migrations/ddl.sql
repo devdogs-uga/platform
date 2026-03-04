@@ -96,10 +96,8 @@ CREATE TABLE `user` (
 	`legalName` varchar(255) NOT NULL,
 	`viewedSettings` boolean NOT NULL DEFAULT false,
 	`createdAt` timestamp NOT NULL DEFAULT (now()),
-	`oauthSecret` varchar(255),
 	`githubId` int,
-	`discordId` varchar(255),
-	CONSTRAINT `oauthSecret_unique` UNIQUE INDEX(`oauthSecret`)
+	`discordId` varchar(255)
 );
 
 ALTER TABLE `authorization_code` ADD CONSTRAINT `authorization_code_clientId_oauth_key_clientId_fkey` FOREIGN KEY (`clientId`) REFERENCES `oauth_key`(`clientId`) ON DELETE SET NULL ON UPDATE CASCADE;

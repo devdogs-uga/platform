@@ -38,7 +38,7 @@ const relations = defineRelations(tables, (r) => ({
     }),
     oauthKey: r.one.oauthKeys({
       from: r.sessions.userId,
-      to: r.oauthKeys.clientId,
+      to: r.oauthKeys.userId,
     }),
     ticTacToeKey: r.one.ticTacToeKeys({
       from: r.sessions.userId,

@@ -1,21 +1,13 @@
+import * as Menu from "@radix-ui/react-dropdown-menu";
+import Link from "next/link";
+import Marquee from "react-fast-marquee";
+import { PiConfettiBold, PiGearBold, PiSignOutBold } from "react-icons/pi";
+import Avatar from "~/components/Avatar";
+import signOut from "~/server/actions/signOut";
 import {
-  githubProfiles,
-  type points,
+  type githubProfiles,
   type publicProfiles,
 } from "~/server/db/schema/tables";
-import * as Menu from "@radix-ui/react-dropdown-menu";
-import Avatar from "~/components/Avatar";
-import Link from "next/link";
-import {
-  PiConfetti,
-  PiConfettiBold,
-  PiGearBold,
-  PiSignOutBold,
-} from "react-icons/pi";
-import signOut from "~/server/actions/signOut";
-import { useMemo } from "react";
-import { addWeeks, isBefore } from "date-fns";
-import Marquee from "react-fast-marquee";
 
 interface Props {
   publicProfile: typeof publicProfiles.$inferSelect;
@@ -39,7 +31,10 @@ export default function ProfileMenu({
 
   return (
     <Menu.Root>
-      <Menu.Trigger className="text-[2rem]/0 md:text-4xl/0">
+      <Menu.Trigger
+        className="text-[2rem]/0 md:text-4xl/0"
+        suppressHydrationWarning
+      >
         <Avatar {...publicProfile} />
       </Menu.Trigger>
 

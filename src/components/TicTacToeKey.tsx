@@ -3,41 +3,33 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import {
   useActionState,
+  useCallback,
   useEffect,
-  useState
+  useState,
+  type FocusEvent,
 } from "react";
 import {
-  PiArrowsClockwiseBold
+  PiArrowsClockwiseBold,
+  PiCheckBold,
+  PiCircleNotchBold,
+  PiCopyBold,
+  PiXBold,
 } from "react-icons/pi";
 import resetOAuthSecret from "~/server/actions/resetOAuthSecret";
 import FormButton from "./FormButton";
 import CopyInput from "./CopyInput";
-
-type ActionState =
-  | {
-      clientId: string;
-      clientSecret: string;
-    }
-  | {
-      clientId: string;
-      clientSecret: null;
-    }
-  | {
-      clientId: null;
-      clientSecret: null;
-    };
+import resetTicTacToeKey from "~/server/actions/resetTicTacToeKey";
 
 interface Props {
-  clientId: string | null;
+  publicKey: string | null;
 }
 
-export default function OAuthSecrets({ clientId: defaultClientId }: Props) {
+export default function OAuthSecrets({ publicKey: defaultPublicKey }: Props) {
   const [alertOpen, setAlertOpen] = useState(false);
-  const [{ clientId, clientSecret }, dispatch, pending] =
-    useActionState<ActionState>(resetOAuthSecret, {
-      clientId: defaultClientId,
-      clientSecret: null,
-    });
+  const [{ publicKey }, dispatch, pending] = useActionState<Props>(
+    resetTicTacToeKey,
+    { publicKey: defaultPublicKey },
+  );
 
   useEffect(() => {
     if (!pending) {
@@ -48,37 +40,19 @@ export default function OAuthSecrets({ clientId: defaultClientId }: Props) {
   return (
     <AlertDialog.Root open={alertOpen} onOpenChange={setAlertOpen}>
       <div className="flex flex-col gap-5 bg-zinc-900 px-4 py-5 inset-shadow-sm">
-        <h3 className="text-xl font-bold">OAuth</h3>
+        <h3 className="text-xl font-bold">TicTacToe</h3>
 
         <label className="flex flex-col gap-1.5">
-          <span className="max-w-prose text-zinc-300">Client ID</span>
+          <span className="max-w-prose text-zinc-300">Public Key</span>
           <CopyInput
-            value={clientId ?? "(No client exists)"}
-            disabled={clientId === null}
-          />
-        </label>
-
-        <label className="flex flex-col gap-1.5">
-          <span className="max-w-prose text-zinc-300">Client Secret</span>
-          <CopyInput
-            value={
-              clientId
-                ? (clientSecret ??
-                  "ddk_ • • • • • • • • • • • • • • • • • • • •")
-                : "(No client exists)"
-            }
-            disabled={clientSecret === null}
+            value={publicKey ?? "(No key exists)"}
+            disabled={publicKey === null}
           />
         </label>
       </div>
       <div className="flex flex-col items-center justify-center gap-4 border-t border-zinc-800 bg-black p-4 font-medium sm:flex-row sm:justify-between">
         <p className="max-w-prose text-center text-sm text-balance text-zinc-400 sm:text-left">
-          Client secrets cannot be accessed after they are generated: store them
-          safely in your project&rsquo;s{" "}
-          <span className="cursor-default rounded-sm bg-zinc-800 px-1 py-0.5 font-mono text-rose-300">
-            .env
-          </span>{" "}
-          file!
+          This key is safe to share publicly.
         </p>
 
         <AlertDialog.Trigger asChild>
@@ -86,7 +60,7 @@ export default function OAuthSecrets({ clientId: defaultClientId }: Props) {
             className="rounded-sm bg-purple-900 px-4 py-1 text-nowrap ring-purple-950 hover:not-disabled:bg-purple-200 hover:not-disabled:text-purple-950"
             type="button"
           >
-            <PiArrowsClockwiseBold /> Reset Client Keys
+            <PiArrowsClockwiseBold /> Reset API Key
           </FormButton>
         </AlertDialog.Trigger>
       </div>
@@ -100,11 +74,11 @@ export default function OAuthSecrets({ clientId: defaultClientId }: Props) {
             action={dispatch}
           >
             <AlertDialog.Title className="flex items-center gap-2 text-2xl/none font-semibold">
-              Reset Client Keys
+              Reset API Key
             </AlertDialog.Title>
             <AlertDialog.Description>
-              Resetting your client keys invalidates your existing client ID and secret. This means
-              you won&rsquo;t be able to continue using them in your projects.
+              Resetting your API key invalidates your existing key. This means
+              you won&rsquo;t be able to continue using it in your projects.
             </AlertDialog.Description>
             <div className="flex items-center justify-end gap-4">
               <AlertDialog.Cancel className="rounded-sm border border-zinc-700 bg-zinc-800 px-4 py-1 shadow-xs transition-[background-color,color,border-color,box-shadow] hover:border-zinc-600 hover:bg-zinc-700 hover:text-white hover:shadow-sm">
