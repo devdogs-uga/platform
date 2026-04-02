@@ -6,7 +6,7 @@
   "scripts": {
     "build": "next build",
     "check": "pnpm run lint:fix && pnpm run typecheck && pnpm run prettier",
-    "db:generate": "pnpm drizzle-kit export > migrations/ddl.sql",
+    "db:generate": "pnpm drizzle-kit export > volumes/atlas/ddl.sql",
     "db:migrate": "docker compose run --rm atlas schema apply --config file://migrations/atlas.hcl --env local",
     "db:push": "pnpm db:generate && pnpm db:migrate",
     "db:studio": "drizzle-kit studio",

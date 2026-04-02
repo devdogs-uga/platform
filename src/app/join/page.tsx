@@ -56,7 +56,7 @@ export default async function Join() {
   }
 
   return (
-    <main className="mx-auto mt-18 md:mt-19 flex w-full max-w-2xl flex-col gap-4 px-3 py-8 [counter-reset:step_0] sm:gap-6 sm:py-12 grow">
+    <main className="mx-auto mt-18 flex w-full max-w-2xl grow flex-col gap-4 px-3 py-8 [counter-reset:step_0] sm:gap-6 sm:py-12 md:mt-19">
       <header className="pb-10 text-center">
         <h2 className="pb-4 text-3xl font-bold sm:text-4xl">
           Hi there,{" "}

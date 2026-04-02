@@ -51,7 +51,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${sans.variable}`}>
       <body className="bg-zinc-950 text-white">
-        <div className="flex flex-col min-h-screen">
+        <div className="flex min-h-screen flex-col">
           <Navigation
             githubProfile={session?.user.github}
             streak={streak}

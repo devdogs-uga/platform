@@ -128,7 +128,7 @@ export default function Navigation({
         ref={navigationRef}
       >
         <div
-          className="group absolute flex h-18 md:h-19 w-full flex-col overflow-y-hidden from-rose-950/20 to-black/30 transition-[background-color,box-shadow,backdrop-filter,translate,height] data-backdrop:bg-zinc-950/60 data-backdrop:shadow-xl data-backdrop:backdrop-blur-sm data-menu-open:h-dvh"
+          className="group absolute flex h-18 w-full flex-col overflow-y-hidden from-rose-950/20 to-black/30 transition-[background-color,box-shadow,backdrop-filter,translate,height] data-backdrop:bg-zinc-950/60 data-backdrop:shadow-xl data-backdrop:backdrop-blur-sm data-menu-open:h-dvh md:h-19"
           data-scrolled={hasScrolled || undefined}
           data-menu-open={isMenuOpen || undefined}
           data-from-link-in-bio={isFromLinkInBio || undefined}
@@ -178,7 +178,7 @@ export default function Navigation({
           </div>
 
           <div className="hidden transition-[display] delay-500 group-data-from-link-in-bio:contents">
-            <div className="mb-18 md:mb-19 flex grow flex-col justify-center px-3">
+            <div className="mb-18 flex grow flex-col justify-center px-3 md:mb-19">
               <LinkInBio />
             </div>
           </div>

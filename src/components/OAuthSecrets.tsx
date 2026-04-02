@@ -1,14 +1,8 @@
 "use client";
 
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import {
-  useActionState,
-  useEffect,
-  useState
-} from "react";
-import {
-  PiArrowsClockwiseBold
-} from "react-icons/pi";
+import { useActionState, useEffect, useState } from "react";
+import { PiArrowsClockwiseBold } from "react-icons/pi";
 import resetOAuthSecret from "~/server/actions/resetOAuthSecret";
 import FormButton from "./FormButton";
 import CopyInput from "./CopyInput";
@@ -103,8 +97,9 @@ export default function OAuthSecrets({ clientId: defaultClientId }: Props) {
               Reset Client Keys
             </AlertDialog.Title>
             <AlertDialog.Description>
-              Resetting your client keys invalidates your existing client ID and secret. This means
-              you won&rsquo;t be able to continue using them in your projects.
+              Resetting your client keys invalidates your existing client ID and
+              secret. This means you won&rsquo;t be able to continue using them
+              in your projects.
             </AlertDialog.Description>
             <div className="flex items-center justify-end gap-4">
               <AlertDialog.Cancel className="rounded-sm border border-zinc-700 bg-zinc-800 px-4 py-1 shadow-xs transition-[background-color,color,border-color,box-shadow] hover:border-zinc-600 hover:bg-zinc-700 hover:text-white hover:shadow-sm">

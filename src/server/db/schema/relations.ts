@@ -20,10 +20,6 @@ const relations = defineRelations(tables, (r) => ({
       from: r.users.id,
       to: r.oauthKeys.clientId,
     }),
-    ticTacToeKey: r.one.ticTacToeKeys({
-      from: r.users.id,
-      to: r.ticTacToeKeys.userId,
-    }),
   },
   sessions: {
     user: r.one.users({
@@ -40,20 +36,10 @@ const relations = defineRelations(tables, (r) => ({
       from: r.sessions.userId,
       to: r.oauthKeys.userId,
     }),
-    ticTacToeKey: r.one.ticTacToeKeys({
-      from: r.sessions.userId,
-      to: r.ticTacToeKeys.userId,
-    }),
   },
   oauthKeys: {
     client: r.one.users({
       from: r.oauthKeys.clientId,
-      to: r.users.id,
-    }),
-  },
-  ticTacToeKeys: {
-    client: r.one.users({
-      from: r.ticTacToeKeys.userId,
       to: r.users.id,
     }),
   },

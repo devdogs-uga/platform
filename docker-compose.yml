@@ -1,12 +1,29 @@
 services:
   s3:
-    image: localstack/localstack:s3-latest
+    image: localstack/localstack:4.14
     ports:
       - "${S3_PORT:-4566}:4566"
     environment:
-      - AWS_REGION=${S3_REGION:-us-east-1}
-      - AWS_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID:-test}
-      - AWS_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY:-test}
+      AWS_REGION: ${S3_REGION:-us-east-1}
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-test}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-devdogs}
+    volumes:
+      - ./volumes/s3/init:/etc/localstack/init/ready.d:ro
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "awslocal",
+          "s3api",
+          "wait",
+          "bucket-exists",
+          "--bucket",
+          "${S3_BUCKET_NAME:-devdogs}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: on-failure:3
 
   mysql:
@@ -18,7 +35,7 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-devdogs}
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
     restart: on-failure:3
@@ -30,7 +47,7 @@ services:
       MYSQL_DATABASE: dev
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
     restart: on-failure:3
@@ -38,9 +55,6 @@ services:
   atlas:
     image: arigaio/atlas:latest-alpine
     environment:
-      MYSQL_HOST: ${MYSQL_HOST:-mysql}
-      MYSQL_USER: ${MYSQL_USER:-root}
-      MYSQL_PORT: ${MYSQL_PORT:-25060}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-devdogs}
     depends_on:
@@ -49,7 +63,7 @@ services:
       mysql-dev:
         condition: service_healthy
     volumes:
-      - ./migrations/:/migrations
+      - ./volumes/atlas/:/migrations:ro
     command: >
       schema clean
         -u "mysql://root:password@mysql-dev:3306/dev" 
