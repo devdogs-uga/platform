@@ -29,6 +29,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.4.1",
     "@discordjs/builders": "^1.13.1",
     "@discordjs/rest": "^2.6.0",
     "@octokit/graphql": "^9.0.3",
