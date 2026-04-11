@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 import { Hanken_Grotesk } from "next/font/google";
 import Footer from "~/components/Footer";
 import Navigation from "~/components/Navigation";
+import QueryProvider from "~/components/QueryProvider";
 import { expectUserWith } from "~/server/auth";
 
 export const metadata: Metadata = {
@@ -49,15 +50,17 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${sans.variable}`}>
       <body className="bg-zinc-950 text-white">
-        <div className="flex min-h-screen flex-col">
-          <Navigation
-            githubProfile={user?.leaderboardProfile}
-            streak={streak}
-            profile={user?.profile}
-          />
-          {children}
-        </div>
-        <Footer />
+        <QueryProvider>
+          <div className="flex min-h-screen flex-col">
+            <Navigation
+              githubProfile={user?.leaderboardProfile}
+              streak={streak}
+              profile={user?.profile}
+            />
+            {children}
+          </div>
+          <Footer />
+        </QueryProvider>
       </body>
     </html>
   );

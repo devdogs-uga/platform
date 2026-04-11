@@ -1,17 +1,15 @@
 "use client";
 
-import { useActionState, useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   PiArrowUpBold,
   PiCheckBold,
   PiPencilSimpleBold,
   PiXBold,
 } from "react-icons/pi";
-import profileLinksAction, {
-  type ProfileLinksState,
-} from "~/server/actions/profileLinks";
-import FormButton from "./FormButton";
+import { useProfileLinks } from "~/hooks/useProfileLinks";
 import type { profileLinks } from "~/server/db/schema/tables";
+import FormButton from "./FormButton";
 
 interface Props {
   initialLinks: (typeof profileLinks.$inferSelect)[];
@@ -28,11 +26,13 @@ function faviconUrl(url: string): string {
 
 interface LinkRowProps {
   link: typeof profileLinks.$inferSelect;
-  dispatch: (formData: FormData) => void;
+  onRemove: (id: string) => void;
+  onUpdateTitle: (id: string, title: string) => void;
 }
 
-function LinkRow({ link, dispatch }: LinkRowProps) {
+function LinkRow({ link, onRemove, onUpdateTitle }: LinkRowProps) {
   const [editing, setEditing] = useState(false);
+  const [titleValue, setTitleValue] = useState(link.title ?? "");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const favicon = faviconUrl(link.url);
@@ -49,13 +49,22 @@ function LinkRow({ link, dispatch }: LinkRowProps) {
     setEditing(false);
   }, []);
 
+  const handleRemove = useCallback(() => {
+    onRemove(link.id);
+  }, [link.id, onRemove]);
+
+  const handleTitleSubmit = useCallback(
+    (e: React.BaseSyntheticEvent) => {
+      e.preventDefault();
+      onUpdateTitle(link.id, titleValue);
+      setEditing(false);
+    },
+    [link.id, titleValue, onUpdateTitle],
+  );
+
   return (
     <li className="flex max-w-lg flex-col gap-0.5 rounded-sm border border-zinc-700 bg-zinc-950 px-3.5 pb-3 pt-2.25">
-      <form
-        className="flex min-w-0 flex-1 items-center gap-3"
-        action={dispatch}
-        onSubmit={stopEditing}
-      >
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         {favicon && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -67,16 +76,14 @@ function LinkRow({ link, dispatch }: LinkRowProps) {
           />
         )}
 
-        <input type="hidden" name="id" value={link.id} readOnly />
-
         {editing ? (
-          <>
-            <input type="hidden" name="intent" value="update-title" readOnly />
+          <form className="contents" onSubmit={handleTitleSubmit}>
             <input
               ref={inputRef}
               name="title"
               type="text"
-              defaultValue={link.title ?? ""}
+              value={titleValue}
+              onChange={(e) => setTitleValue(e.target.value)}
               placeholder={new URL(link.url).hostname}
               maxLength={100}
               className="form-input -ml-2 w-full rounded-sm border border-zinc-600 bg-zinc-900 px-2 py-0.5 text-sm ring-0 ring-zinc-400 transition-shadow focus:ring-1 focus:outline-none"
@@ -89,10 +96,9 @@ function LinkRow({ link, dispatch }: LinkRowProps) {
             >
               <PiCheckBold />
             </button>
-          </>
+          </form>
         ) : (
           <>
-            <input type="hidden" name="intent" value="remove-link" readOnly />
             <button
               type="button"
               onClick={startEditing}
@@ -105,7 +111,8 @@ function LinkRow({ link, dispatch }: LinkRowProps) {
               <PiPencilSimpleBold className="shrink-0 text-zinc-300 opacity-0 transition-opacity group-hover:opacity-100" />
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={handleRemove}
               className="-my-0.75 rounded-sm p-1.25 text-rose-400/80 hover:bg-rose-600/20 hover:text-rose-300"
               aria-label={`Remove ${displayTitle}`}
             >
@@ -113,7 +120,7 @@ function LinkRow({ link, dispatch }: LinkRowProps) {
             </button>
           </>
         )}
-      </form>
+      </div>
 
       <a
         href={link.url}
@@ -159,15 +166,22 @@ function AddLinkPreview({ url }: { url: string }) {
 }
 
 export default function ProfileLinks({ initialLinks }: Props) {
-  const [{ links, error }, dispatch] = useActionState<
-    ProfileLinksState,
-    FormData
-  >(profileLinksAction, { links: initialLinks });
+  const { links, error, addLink, removeLink, updateLinkTitle, isAddingLink } =
+    useProfileLinks(initialLinks);
 
   const [urlInput, setUrlInput] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   const atMax = links.length >= 5;
+
+  const handleAddSubmit = useCallback(
+    (e: React.BaseSyntheticEvent) => {
+      e.preventDefault();
+      addLink(urlInput);
+      setUrlInput("");
+    },
+    [urlInput, addLink],
+  );
 
   return (
     <section className="w-full overflow-hidden rounded-md border border-zinc-800">
@@ -182,7 +196,12 @@ export default function ProfileLinks({ initialLinks }: Props) {
 
         <ul className="flex flex-col gap-2 empty:hidden">
           {links.map((link) => (
-            <LinkRow key={link.id} link={link} dispatch={dispatch} />
+            <LinkRow
+              key={link.id}
+              link={link}
+              onRemove={removeLink}
+              onUpdateTitle={updateLinkTitle}
+            />
           ))}
         </ul>
 
@@ -190,11 +209,9 @@ export default function ProfileLinks({ initialLinks }: Props) {
           <div className="flex flex-col gap-2">
             <form
               ref={formRef}
-              action={dispatch}
               className="flex max-w-md gap-1.5"
-              onSubmit={() => setUrlInput("")}
+              onSubmit={handleAddSubmit}
             >
-              <input type="hidden" name="intent" value="add-link" />
               <label className="flex w-full overflow-hidden rounded-sm border border-zinc-700 bg-zinc-950 ring-0 ring-zinc-400 transition-shadow focus-within:ring-1 has-disabled:cursor-not-allowed">
                 <input
                   className="form-input w-full border-0 bg-zinc-950 px-3 font-mono inset-shadow-sm placeholder:text-zinc-600 focus:ring-0"
@@ -203,6 +220,7 @@ export default function ProfileLinks({ initialLinks }: Props) {
                   placeholder="https://example.com"
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
+                  disabled={isAddingLink}
                   required
                 />
               </label>

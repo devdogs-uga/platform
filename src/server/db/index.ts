@@ -13,7 +13,7 @@ const conn =
     prepare: false,
   });
 
-export const db = drizzle({ client: conn, schema, relations });
+export const db = drizzle({ client: conn, schema, relations, casing: "camelCase" });
 
 if (env.NODE_ENV !== "production") {
   globalForDb.conn = conn;

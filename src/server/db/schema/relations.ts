@@ -46,10 +46,22 @@ const relations = defineRelations(tables, (r) => ({
       from: r.profiles.userId,
       to: r.profileLinks.userId,
     }),
+    oauthClient: r.one.oauthClients({
+      from: r.profiles.userId,
+      to: r.oauthClients.userId,
+      optional: true,
+    }),
   },
   profileLinks: {
     profile: r.one.profiles({
       from: r.profileLinks.userId,
+      to: r.profiles.userId,
+      optional: false,
+    }),
+  },
+  oauthClients: {
+    profile: r.one.profiles({
+      from: r.oauthClients.userId,
       to: r.profiles.userId,
       optional: false,
     }),

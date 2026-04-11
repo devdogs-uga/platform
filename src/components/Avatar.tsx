@@ -1,10 +1,12 @@
 import { Fallback, Image, Root } from "@radix-ui/react-avatar";
 import { getImageProps } from "next/image";
+import { env } from "~/env";
 import type { profiles } from "~/server/db/schema/tables";
 
 export default function Avatar(profile: typeof profiles.$inferSelect) {
+  const src = `${env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${env.NEXT_PUBLIC_AVATARS_BUCKET}/${profile.userId}`;
   const { props: imgProps } = getImageProps({
-    src: `/api/avatar/${profile.userId}`,
+    src,
     alt: profile.preferredName,
     width: 64,
     height: 64,

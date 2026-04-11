@@ -1,22 +1,22 @@
 "use client";
 
-import { useActionState } from "react";
 import {
   PiDiscordLogoBold,
   PiGithubLogoBold,
   PiLinkBreakBold,
 } from "react-icons/pi";
+import { useAccountVisibility } from "~/hooks/useAccountVisibility";
 import linkDiscordProfile from "~/server/actions/linkDiscordProfile";
 import linkGithubProfile from "~/server/actions/linkGithubProfile";
 import unlinkDiscordProfile from "~/server/actions/unlinkDiscordProfile";
 import unlinkGithubProfile from "~/server/actions/unlinkGithubProfile";
-import updateAccountVisibility from "~/server/actions/updateAccountVisibility";
 import ConfirmDestructiveAction from "./ConfirmDestructiveAction";
 import FormButton from "./FormButton";
 import IconInput from "./IconInput";
 import Toggle from "./Toggle";
 
 interface Props {
+  userId: string,
   githubLogin?: string;
   discordUsername?: string;
   showGithub: boolean;
@@ -24,15 +24,16 @@ interface Props {
 }
 
 export default function ConnectedAccounts({
+  userId,
   githubLogin,
   discordUsername,
   showGithub: initialShowGithub,
   showDiscord: initialShowDiscord,
 }: Props) {
-  const [{ showGithub, showDiscord }, dispatch] = useActionState(
-    updateAccountVisibility,
-    { showGithub: initialShowGithub, showDiscord: initialShowDiscord },
-  );
+  const { showGithub, showDiscord, toggle, isPending } = useAccountVisibility(userId, {
+    showGithub: initialShowGithub,
+    showDiscord: initialShowDiscord,
+  });
 
   return (
     <section
@@ -54,12 +55,18 @@ export default function ConnectedAccounts({
             <>
               <form
                 className="flex items-center gap-3 self-start text-sm"
-                action={dispatch}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  toggle("github");
+                }}
               >
-                <input type="hidden" name="provider" value="github" />
                 <label className="contents">
                   <span className="w-12 text-base">
-                    <Toggle checked={showGithub} name="show" />
+                    <Toggle
+                      checked={showGithub}
+                      pending={isPending("github")}
+                      disabled={isPending("github")}
+                    />
                   </span>
                   Display on Profile
                 </label>
@@ -119,12 +126,18 @@ export default function ConnectedAccounts({
             <>
               <form
                 className="flex items-center gap-3 self-start text-sm"
-                action={dispatch}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  toggle("discord");
+                }}
               >
-                <input type="hidden" name="provider" value="discord" />
                 <label className="contents">
                   <span className="w-12 text-base">
-                    <Toggle checked={showDiscord} name="show" />
+                    <Toggle
+                      checked={showDiscord}
+                      pending={isPending("discord")}
+                      disabled={isPending("discord")}
+                    />
                   </span>
                   Display on Profile
                 </label>

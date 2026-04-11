@@ -3,7 +3,7 @@
  * for Docker builds.
  */
 import type { NextConfig } from "next";
-import "~/env";
+import { env } from "~/env";
 
 const config = {
   async redirects() {
@@ -26,6 +26,12 @@ const config = {
   },
   experimental: {
     authInterrupts: true,
+  },
+  images: {
+    remotePatterns: [
+      new URL("/storage/v1/object/public/**", env.NEXT_PUBLIC_SUPABASE_URL),
+    ],
+    // dangerouslyAllowLocalIP: env.NODE_ENV !== "production"
   },
 } satisfies NextConfig;
 

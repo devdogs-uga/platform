@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { authenticate, expectUserWith } from "../auth";
 import { db } from "../db";
-import { profiles } from "../db/schema/tables";
+import { oauthClients } from "../db/schema/tables";
 import { supabaseAdmin } from "../supabaseAdmin";
 import isLocalUri from "~/lib/isLocalUri";
 
@@ -25,11 +25,11 @@ export default async function oauthAction(
   const intent = formData.get("intent")?.toString();
 
   const user = await expectUserWith({
-    profile: { columns: { oauthClientId: true } },
+    profile: { with: { oauthClient: true } },
     githubIdentity: { columns: { id: true } },
   }).catch(() => authenticate("google", "/settings/keys"));
 
-  const clientId = user.profile?.oauthClientId;
+  const clientId = user.profile?.oauthClient?.clientId ?? null;
 
   // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (intent) {
@@ -37,9 +37,8 @@ export default async function oauthAction(
       if (clientId) {
         await db.transaction(async (tx) => {
           await tx
-            .update(profiles)
-            .set({ oauthClientId: null })
-            .where(eq(profiles.userId, user.id));
+            .delete(oauthClients)
+            .where(eq(oauthClients.userId, user.id));
           await supabaseAdmin.auth.admin.oauth.deleteClient(clientId);
         });
         return { clientId: null, clientSecret: null, redirectUris: [] };
@@ -60,9 +59,8 @@ export default async function oauthAction(
       if (error ?? !data) throw new Error("Failed to create OAuth client");
 
       await db
-        .update(profiles)
-        .set({ oauthClientId: data.client_id })
-        .where(eq(profiles.userId, user.id));
+        .insert(oauthClients)
+        .values({ userId: user.id, clientId: data.client_id });
 
       return {
         clientId: data.client_id,

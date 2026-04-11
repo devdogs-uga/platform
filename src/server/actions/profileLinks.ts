@@ -1,6 +1,6 @@
 "use server";
 
-import { and, count, eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import ogs from "open-graph-scraper";
 import * as z from "zod";
 import * as zfd from "zod-form-data";
@@ -8,133 +8,64 @@ import { authenticate, expectSession } from "../auth";
 import { db } from "../db";
 import { profileLinks } from "../db/schema/tables";
 
-export type ProfileLinksState = {
-  links: (typeof profileLinks.$inferSelect)[];
+export type AddLinkResult = {
+  link?: typeof profileLinks.$inferSelect;
   error?: string;
 };
 
-async function fetchLinkMetadata(
-  url: string,
-): Promise<{ title: string | null }> {
-  try {
-    const { result } = await ogs({ url, timeout: 5000 });
-    return { title: result.ogTitle ?? result.dcTitle ?? null };
-  } catch {
-    return { title: null };
-  }
-}
-
-const addLinkSchema = z.object({
-  intent: zfd.text(z.literal("add-link")),
+const schema = zfd.formData({
   url: zfd.text(z.url()),
 });
 
-const removeLinkSchema = z.object({
-  intent: zfd.text(z.literal("remove-link")),
-  id: zfd.text(z.uuid()),
-});
-
-const updateTitleSchema = z.object({
-  intent: zfd.text(z.literal("update-title")),
-  id: zfd.text(z.uuid()),
-  title: zfd.text(z.string().min(1).max(64)),
-});
-
-const profileLinkUpdateSchema = zfd.formData(
-  z.union([
-    addLinkSchema,
-    removeLinkSchema,
-    updateTitleSchema,
-  ]),
-);
-
-export default async function profileLinksAction(
-  prev: ProfileLinksState,
+export default async function addProfileLink(
   formData: FormData,
-) {
+): Promise<AddLinkResult> {
   const userId = await expectSession().catch(() =>
     authenticate("google", "/settings/profile"),
   );
 
-  const data = await profileLinkUpdateSchema.parseAsync(formData);
+  const parsed = await schema.safeParseAsync(formData);
+  if (!parsed.success) return { error: "Invalid URL." };
 
-  switch (data.intent) {
-    case "add-link": {
-      const { protocol, hostname } = new URL(data.url);
+  const { url } = parsed.data;
+  const { protocol, hostname } = new URL(url);
 
-      if (protocol !== "http:" && protocol !== "https:") {
-        return {
-          ...prev,
-          error: "Only http and https URLs are supported.",
-        } satisfies ProfileLinksState;
-      }
-
-      return await db.transaction(async (tx) => {
-        const countResult = await tx
-          .select({ linkCount: count() })
-          .from(profileLinks)
-          .where(eq(profileLinks.userId, userId));
-
-        const linkCount = countResult[0]?.linkCount ?? 0;
-
-        if (linkCount >= 5) {
-          return { ...prev, error: "You can only add up to 5 links." };
-        }
-
-        const { title } = await fetchLinkMetadata(data.url);
-
-        const [inserted] = await tx
-          .insert(profileLinks)
-          .values({
-            userId,
-            url: data.url,
-            title:
-              title ??
-              hostname.substring(0, 1).toUpperCase() + hostname.substring(1),
-          })
-          .returning();
-
-        if (!inserted) {
-          return {
-            ...prev,
-            error: "Failed to save link.",
-          } satisfies ProfileLinksState;
-        }
-
-        return {
-          links: [...prev.links, inserted],
-          error: undefined,
-        } satisfies ProfileLinksState;
-      });
-    }
-
-    case "remove-link": {
-      await db
-        .delete(profileLinks)
-        .where(
-          and(eq(profileLinks.id, data.id), eq(profileLinks.userId, userId)),
-        );
-
-      return {
-        links: prev.links.filter((l) => l.id !== data.id),
-        error: undefined,
-      } satisfies ProfileLinksState;
-    }
-
-    case "update-title": {
-      await db
-        .update(profileLinks)
-        .set({ title: data.title })
-        .where(
-          and(eq(profileLinks.id, data.id), eq(profileLinks.userId, userId)),
-        );
-
-      return {
-        links: prev.links.map((l) =>
-          l.id === data.id ? { ...l, title: data.title } : l,
-        ),
-        error: undefined,
-      } satisfies ProfileLinksState;
-    }
+  if (protocol !== "http:" && protocol !== "https:") {
+    return { error: "Only http and https URLs are supported." };
   }
+
+  return db.transaction(async (tx) => {
+    const [{ linkCount }] = await tx
+      .select({ linkCount: count() })
+      .from(profileLinks)
+      .where(eq(profileLinks.userId, userId));
+
+    if ((linkCount ?? 0) >= 5) {
+      return { error: "You can only add up to 5 links." };
+    }
+
+    // OG title fetching must remain server-side. Browsers block cross-origin
+    // HTML fetches (CORS) unless the target sets Access-Control-Allow-Origin,
+    // which almost no site does on its HTML pages.
+    let title: string | null = null;
+    try {
+      const { result } = await ogs({ url, timeout: 5000 });
+      title = result.ogTitle ?? result.dcTitle ?? null;
+    } catch {
+      // fall through to hostname fallback
+    }
+
+    const [inserted] = await tx
+      .insert(profileLinks)
+      .values({
+        userId,
+        url,
+        title: title ?? hostname.charAt(0).toUpperCase() + hostname.slice(1),
+      })
+      .returning();
+
+    if (!inserted) return { error: "Failed to save link." };
+
+    return { link: inserted };
+  });
 }

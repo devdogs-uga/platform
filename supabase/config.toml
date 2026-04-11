@@ -3,7 +3,7 @@ project_id = "devdogs-website"
 [api]
 enabled = true
 port = 54321
-schemas = ["public", "graphql_public"]
+schemas = ["public", "graphql_public","storage"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
@@ -38,15 +38,21 @@ port = 54324
 enabled = true
 file_size_limit = "50MiB"
 
+[storage.buckets.avatars]
+public = true
+file_size_limit = "5MiB"
+# MIME types accepted by Next.js Image Optimization
+allowed_mime_types = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/avif"]
+
 [auth]
 enabled = true
 site_url = "env(BASE_URL)"
 additional_redirect_urls = ["env(BASE_URL)/api/auth/callback"]
 enable_manual_linking = true
 
-[auth.hook.custom_access_token]
-enabled = true
-uri = "pg-functions://postgres/public/custom_access_token_hook"
+# [auth.hook.custom_access_token]
+# enabled = true
+# uri = "pg-functions://postgres/public/custom_access_token_hook"
 
 [auth.oauth_server]
 enabled = true

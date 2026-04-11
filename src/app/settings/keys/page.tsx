@@ -7,11 +7,11 @@ import { supabaseAdmin } from "~/server/supabaseAdmin";
 
 export default async function Keys() {
   const { profile, githubIdentity } = await expectUserWith({
-    profile: { columns: { oauthClientId: true } },
+    profile: { with: { oauthClient: true } },
     githubIdentity: { columns: { id: true } },
   }).catch(() => redirect("/api/auth"));
 
-  const clientId = profile?.oauthClientId ?? null;
+  const clientId = profile?.oauthClient?.clientId ?? null;
 
   const redirectUris: string[] = [];
 

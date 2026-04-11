@@ -55,7 +55,9 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_SUPABASE_URL: z.string(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
+    NEXT_PUBLIC_AVATARS_BUCKET: z.string(),
   },
 
   /**
@@ -88,6 +90,10 @@ export const env = createEnv({
     S3_PROTOCOL_REGION: process.env.S3_PROTOCOL_REGION,
     SECRET_KEY: process.env.SECRET_KEY,
     STORAGE_S3_URL: process.env.STORAGE_S3_URL,
+    // Client-side Supabase (mirrored from API_URL / PUBLISHABLE_KEY by sb:start)
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_AVATARS_BUCKET: process.env.NEXT_PUBLIC_AVATARS_BUCKET,
     // Built-ins
     NODE_ENV: process.env.NODE_ENV,
   },
