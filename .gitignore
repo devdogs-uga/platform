@@ -33,9 +33,11 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-# do not commit any .env files to git, except for the .env.example file. 
+# do not commit any .env files to git, except for the .env.example and
+# .env.remote.example files.
 .env*
 !.env.example
+!.env.remote.example
 
 # vercel
 .vercel
@@ -43,14 +45,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-# idea files
-.idea
-
-volumes/atlas/ddl.sql
-volumes/s3/*
-
 # supabase
-supabase/*
-!supabase/config.toml
-src/supabase/types.d.ts
-src/supabase/drizzle
+supabase/.*
+
+# ide configurations
+.vscode
+.claude
+.idea
+.mcp.json
