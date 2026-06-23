@@ -1,9 +1,4 @@
----
-title: Contributing
-description: Guidelines for contributing to the DevDogs Website.
----
-
-# Contributing
+# Contributing!!
 
 Thanks for helping improve the DevDogs Website!
 
@@ -28,6 +23,23 @@ pnpm db:push
 ```
 
 This pulls the introspected schema, pushes migrations, and regenerates Supabase types.
+
+### Remote Supabase
+
+If you've set up `.env.remote` (see
+[Getting Started](./getting-started.md#remote-supabase-optional)), use:
+
+```bash
+pnpm db:push:remote
+```
+
+instead of `pnpm db:push` to push schema changes and regenerate types
+against the **remote** database.
+
+> **Warning:** This applies schema changes directly to whatever database
+> `.env.remote`'s `DB_URL` points to. Double-check `.env.remote` before
+> running this — never point it at a production database. `drizzle-kit
+> push` shows a diff and prompts for confirmation before applying changes.
 
 ## Documentation
 

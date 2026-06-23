@@ -1,8 +1,3 @@
----
-title: DevDogs Website
-description: The official DevDogs UGA club website.
----
-
 # DevDogs Website
 
 Welcome to the documentation for the DevDogs Website — the open-source web platform for the DevDogs club at the University of Georgia.
@@ -14,10 +9,10 @@ Welcome to the documentation for the DevDogs Website — the open-source web pla
 
 ## Tech stack
 
-| Layer | Technology |
-|-------|-----------|
+| Layer     | Technology              |
+| --------- | ----------------------- |
 | Framework | Next.js 15 (App Router) |
-| Database | Supabase (Postgres) |
-| ORM | Drizzle ORM |
-| Styling | Tailwind CSS v4 |
-| Auth | Supabase Auth |
+| Database  | Supabase (Postgres)     |
+| ORM       | Drizzle ORM             |
+| Styling   | Tailwind CSS v4         |
+| Auth      | Supabase Auth           |

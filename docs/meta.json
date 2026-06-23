@@ -1,0 +1,14 @@
+{
+  "title": "DevDogs Website",
+  "pages": [
+    "index",
+    "getting-started",
+    "contributing",
+    "database",
+    "navigation",
+    "caching",
+    "oauth-setup",
+    "feedback-api",
+    "documentation-system"
+  ]
+}
