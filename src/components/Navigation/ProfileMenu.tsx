@@ -4,10 +4,7 @@ import Marquee from "react-fast-marquee";
 import { PiConfettiBold, PiGearBold, PiSignOutBold } from "react-icons/pi";
 import Avatar from "~/components/Avatar";
 import signOut from "~/server/actions/signOut";
-import {
-  type githubProfiles,
-  type publicProfiles,
-} from "~/server/db/schema/tables";
+import type { githubProfiles, publicProfiles } from "~/server/db/schema/tables";
 
 interface Props {
   publicProfile: typeof publicProfiles.$inferSelect;
