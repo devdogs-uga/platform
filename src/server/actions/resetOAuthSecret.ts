@@ -1,7 +1,7 @@
 "use server";
 
 import { createId } from "@paralleldrive/cuid2";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { sql } from "drizzle-orm";
 import { env } from "~/env";
 import { expectSession } from "../auth";
