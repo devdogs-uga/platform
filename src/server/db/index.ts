@@ -16,6 +16,7 @@ async function getDB() {
       password: env.MYSQL_PASSWORD,
       port: env.MYSQL_PORT,
       database: env.MYSQL_DATABASE,
+      disableEval: true,
     });
 
   const db = drizzle({ client, schema, relations, mode: "default" });
