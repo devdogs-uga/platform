@@ -1,10 +1,12 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
-function switchEnvironment<T, R>(opt: { local: T; vercel: R }) {
-  return process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "development"
-    ? opt.vercel
-    : opt.local;
+function switchEnvironment<T, D, P>(opt: {
+  test?: T;
+  development: D;
+  production: P;
+}) {
+  return opt[process.env.NODE_ENV] ?? opt["development"];
 }
 
 export const env = createEnv({
@@ -14,16 +16,18 @@ export const env = createEnv({
    */
   server: {
     BASE_URL: switchEnvironment({
-      local: z.url().default(`http://localhost:${process.env.PORT ?? 3000}`),
-      vercel: z
+      development: z
+        .url()
+        .default(`http://localhost:${process.env.PORT ?? 3000}`),
+      production: z
         .string()
         .transform((str) => "https://" + str)
         .pipe(z.url()),
     }),
     BCRYPT_ROUNDS: z.number().default(12),
     CRON_SECRET: switchEnvironment({
-      local: z.string().default(""),
-      vercel: z.string().min(32),
+      development: z.string().default(""),
+      production: z.string().min(32),
     }),
     DEVDOGS_EPOCH: z.coerce.date().default(new Date(2024, 7, 22)),
     DISCORD_CLIENT_ID: z.string(),
@@ -38,8 +42,8 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     MYSQL_USER: switchEnvironment({
-      local: z.string().default("root"),
-      vercel: z.string(),
+      development: z.string().default("root"),
+      production: z.string(),
     }),
     MYSQL_PASSWORD: z.string().default("password"),
     MYSQL_HOST: z.string().default("localhost"),
@@ -53,12 +57,12 @@ export const env = createEnv({
     S3_ACCESS_KEY_ID: z.string().default("test"),
     S3_SECRET_ACCESS_KEY: z.string().default("test"),
     SHARED_AUTH_CLIENT_ID: switchEnvironment({
-      local: z.string().optional(),
-      vercel: z.string().min(16),
+      development: z.string().optional(),
+      production: z.string().min(16),
     }),
     SHARED_AUTH_CLIENT_SECRET: switchEnvironment({
-      local: z.string().optional(),
-      vercel: z.string().min(32),
+      development: z.string().optional(),
+      production: z.string().min(32),
     }),
   },
 
