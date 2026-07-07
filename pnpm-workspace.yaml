@@ -1,7 +1,0 @@
-onlyBuiltDependencies:
-  - bcrypt
-  - esbuild
-  - sharp
-  - unrs-resolver
-packages:
-  - .
