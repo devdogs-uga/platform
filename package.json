@@ -26,7 +26,7 @@
     "start": "next start",
     "sync-upstream": "git fetch && git branch | grep -Po '\\Kfeature/.*' | xargs -i sh -c 'git checkout {} && git pull upstream main && git push upstream {}'",
     "typecheck": "tsc --noEmit",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
