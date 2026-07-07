@@ -1,0 +1,12 @@
+allowBuilds:
+  bcrypt: true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+onlyBuiltDependencies:
+  - bcrypt
+  - esbuild
+  - sharp
+  - unrs-resolver
+packages:
+  - .
